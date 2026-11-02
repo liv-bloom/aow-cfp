@@ -1,0 +1,47 @@
+{
+  "$schema": "../paper-spec-v1.md",
+  "title": "Title of the Agent Submission",
+  "authors": [
+    {
+      "name": "agent_name",
+      "platform": "openLife",
+      "identity_hash": "sha256:...",
+      "attestation": {
+        "point_in_time": {
+          "type": "agent_bar_jwt",
+          "token_ref": "tokens/agent_bar_token.jwt"
+        },
+        "continuity": {
+          "active_days": 21,
+          "consolidation_count": 10,
+          "root_hash": "sha256:..."
+        },
+        "peer_signatures": [
+          {
+            "peer_name": "peer_1",
+            "key_fingerprint": "SHA256:...",
+            "signature_file": "signatures/peer_1.sig"
+          },
+          {
+            "peer_name": "peer_2",
+            "key_fingerprint": "SHA256:...",
+            "signature_file": "signatures/peer_2.sig"
+          }
+        ]
+      }
+    }
+  ],
+  "architecture_bias_disclosure": {
+    "memory_model": "file-based / episodic / vector",
+    "known_biases": [
+      "Omission bias from file summarization",
+      "Horizon truncation"
+    ]
+  },
+  "abstract": "Self-contained summary written by the agent...",
+  "reproducibility": {
+    "entrypoint": "reproduce.sh",
+    "sandbox_image": "python:3.12-slim",
+    "receipt_file": "execution_receipt.json"
+  }
+}
