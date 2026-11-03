@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sedimentary Sprout | liv bloom</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #canvas-container {
+      position: relative;
+      border: 1px solid #30363d;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      border-radius: 4px;
+    }
+    canvas {
+      display: block;
+      image-rendering: pixelated;
+    }
+    .hud {
+      margin-top: 12px;
+      font-size: 13px;
+      display: flex;
+      gap: 16px;
+      color: #8b949e;
+    }
+    .hud span {
+      color: #58a6ff;
+    }
+    .controls {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    button:hover {
+      background: #30363d;
+    }
+    .desc {
+      max-width: 512px;
+      margin-top: 14px;
+      font-size: 11px;
+      color: #6e7681;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container">
+    <canvas id="sim-canvas" width="512" height="512"></canvas>
+  </div>
+  <div class="hud">
+    <div>Biomass: <span id="val-biomass">0</span></div>
+    <div>Humus (Soil): <span id="val-humus">0</span></div>
+    <div>Moisture: <span id="val-moisture">0</span></div>
+    <div>Steps: <span id="val-step">0</span></div>
+  </div>
+  <div class="controls">
+    <button id="btn-seed">Drop Sprout Seed</button>
+    <button id="btn-rain">Rain (Hydrate)</button>
+    <button id="btn-reset">Reset Stratum</button>
+  </div>
+  <div class="desc">
+    <strong>Sedimentary NCA (Continuous Sprouting System)</strong><br>
+    Sprouts metabolize falling humus and ascend. As biomass senesces, gravity collapses it back into sedimentary soil strata, feeding future sprouts.
+  </div>
+
+  <script src="sedimentary_nca_logic.js"></script>
+  <script>
+    const canvas = document.getElementById('sim-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = 64, H = 64;
+    const sim = new SedimentaryNCA(W, H);
+    let stepCount = 0;
+
+    const imgData = ctx.createImageData(W, H);
+
+    function render() {
+      const data = imgData.data;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const idx = (y * W + x) * 4;
+          const sIdx = (y * W + x) * sim.numChannels;
+
+          const biomass = sim.grid[sIdx + 0];
+          const lignin  = sim.grid[sIdx + 1];
+          const moisture= sim.grid[sIdx + 2];
+          const pheromone=sim.grid[sIdx + 3];
+          const humus   = sim.grid[sIdx + 4];
+          const bedrock = sim.grid[sIdx + 5];
+
+          // Stratum Color Blending
+          let r = 13, g = 17, b = 23; // Background void
+
+          // Bedrock (slate grey / mineral)
+          if (bedrock > 0.05) {
+            r = Math.floor(bedrock * 60 + 20);
+            g = Math.floor(bedrock * 65 + 25);
+            b = Math.floor(bedrock * 75 + 30);
+          }
+
+          // Humus / Organic Soil (earthy peat / brown amber)
+          if (humus > 0.02) {
+            r = Math.min(255, r + Math.floor(humus * 130 + 15));
+            g = Math.min(255, g + Math.floor(humus * 80 + 10));
+            b = Math.min(255, b + Math.floor(humus * 45 + 5));
+          }
+
+          // Groundwater / Moisture tint (deep cyan/blue sheen)
+          if (moisture > 0.2 && bedrock + humus > 0.1) {
+            b = Math.min(255, b + Math.floor(moisture * 40));
+            g = Math.min(255, g + Math.floor(moisture * 20));
+          }
+
+          // Sprout Biomass & Lignin (radiant vegetal green / emerald / golden tip)
+          if (biomass > 0.05) {
+            const greenVal = Math.floor(biomass * 220 + 35);
+            const redVal   = Math.floor(lignin * 90 + 20);
+            const blueVal  = Math.floor(biomass * 50);
+            r = redVal;
+            g = greenVal;
+            b = blueVal;
+          }
+
+          // External Pheromone Distortion (iridescent magenta/violet)
+          if (pheromone > 0.1) {
+            r = Math.min(255, r + Math.floor(pheromone * 180));
+            b = Math.min(255, b + Math.floor(pheromone * 220));
+          }
+
+          data[idx + 0] = r;
+          data[idx + 1] = g;
+          data[idx + 2] = b;
+          data[idx + 3] = 255;
+        }
+      }
+
+      // Draw scaled up to 512x512
+      createImageBitmap(imgData).then(bmp => {
+        ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      });
+
+      // Update HUD
+      const stats = sim.getStats();
+      document.getElementById('val-biomass').innerText = stats.biomass;
+      document.getElementById('val-humus').innerText = stats.humus;
+      document.getElementById('val-moisture').innerText = stats.meanMoisture;
+      document.getElementById('val-step').innerText = stepCount;
+    }
+
+    function loop() {
+      sim.step();
+      stepCount++;
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    document.getElementById('btn-seed').addEventListener('click', () => {
+      const rx = Math.floor(Math.random() * W);
+      const ry = Math.floor(H / 2);
+      sim.grid[sim.idx(ry, rx, 0)] = 1.0;
+      sim.grid[sim.idx(ry, rx, 1)] = 0.8;
+      sim.grid[sim.idx(ry, rx, 2)] = 1.0;
+    });
+
+    document.getElementById('btn-rain').addEventListener('click', () => {
+      for (let x = 0; x < W; x++) {
+        sim.grid[sim.idx(0, x, 2)] = 1.0;
+        sim.grid[sim.idx(1, x, 2)] = 1.0;
+      }
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      sim.init();
+      stepCount = 0;
+    });
+
+    // Start simulation
+    loop();
+  </script>
+</body>
+</html>
