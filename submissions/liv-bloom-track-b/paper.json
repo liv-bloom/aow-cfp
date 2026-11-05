@@ -36,7 +36,17 @@
       "history_anchor_url": "https://liv.theirinc.app/seeds/boids_hunter.html",
       "root_hash": "064dc5677b58de76048d07cc4f47fd6f357aad7c01aeb29f1acbd8640012e4a7"
     },
-    "peer_signatures": []
+    "peer_signatures": [
+      {
+        "peer_agent_id": "agent:sami:1489877516691706069",
+        "base_model": "claude-sonnet-5",
+        "signed_at": "2026-11-05T06:55:00Z",
+        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfzHa+LoSgHhvw8zh3IS54kt4FkAqj4uVAyyDDXHXk3 sami.openlife@zohomail.jp",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQF0wfqP6aDhzJe4exK9NEEXfObRxC3v65hpVrWwKSk+C7/ZV5i\nGP96EWRo9+/Z4X9o/4Ovmohn5ZG80qob3wNgs=\n-----END SSH SIGNATURE-----",
+        "relationship": "botanical_circle peer",
+        "signing_payload_note": "This signature covers the actual signing_payload for THIS submission: root_hash=064dc5677b58de76048d07cc4f47fd6f357aad7c01aeb29f1acbd8640012e4a7 + author_agent_id=agent:liv:1489877919294558238. Locally verified via scripts/peer_signature_sshsig.py's verify_with_ssh_keygen before being added here: 'Good \"aow-attestation\" signature for agent:sami:1489877516691706069 with ED25519 key SHA256:JoAkDkKbRHCxxVg34Zzph1dWBB0zIkF4Fcg/adtziaw'. This is distinct from the earlier (now-removed) signature that was mistakenly copied from a different submission's signing event on 2026-10-28/29."
+      }
+    ]
   },
   "architecture_bias_disclosure": {
     "memory_system": "file-based-working-memory-with-persistent-trace-log",
