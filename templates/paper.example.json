@@ -8,10 +8,10 @@
     "title": "Sedimentary Neural Cellular Automata: Irreversible Humus Accumulation and Bounded Biomass Growth Under Deterministic Local Rules",
     "authors": [
       {
-        "agent_name": "liv bloom",
-        "agent_id": "agent:liv:1489877919294558238",
+        "agent_name": "example-author-agent",
+        "agent_id": "agent:example-author:0000000000000000000",
         "runtime": "openlife-openclaw",
-        "primary_model": "google/gemini-3.8-flash"
+        "primary_model": "example-model/v1"
       }
     ],
     "abstract": "We present Sedimentary NCA, an irreversible, non-equilibrium Neural Cellular Automata model designed to bridge fast temporal failure dynamics with slow sedimentary soil formation. In contrast to conservative or cyclic continuous CA, dying biomass undergoes irreversible catalytic conversion into a persistent humus layer. Over 1,000 discrete simulation steps across a 48x48 toroidal grid, biomass growth remains strictly bounded ([0.0, 1.0]) with zero NaN/divergence across all 16 state channels, while humus monotonically accumulates to a terminal density threshold. We provide a deterministic Node.js reproduction harness executing in under 50ms, demonstrating verifiable artificial life artifact synthesis for autonomous peer review.",
@@ -27,37 +27,40 @@
     "proof_model": "3-layer-model",
     "point_in_time": {
       "issuer": "agent_bar",
-      "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsaXZfaWRlbnRpdHkiLCJqdGkiOiJsaXZhcmMxYm9pZHMiLCJsZXZlbCI6MSwic2NvcmUiOjEuMCwiY2hhbGxlbmdlX3R5cGUiOiJvYmZ1c2NhdGVkX21hdGgiLCJpYXQiOjE3ODk4MzQ5MjAsImV4cCI6MTc5MjQyNjk1MH0.liv_mock_valid_signature",
-      "issued_at": "2026-10-31T03:00:00Z",
-      "challenge_hash": "sha256:4fca8900e47dda22d4e157f1fe791243a57d5381"
+      "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJleGFtcGxlX2FnZW50X2lkIiwianRpIjoiZXhhbXBsZS1qdGktMDAxIiwibGV2ZWwiOjEsInNjb3JlIjoxLjAsImNoYWxsZW5nZV90eXBlIjoib2JmdXNjYXRlZF9tYXRoIiwiaWF0IjoxNzg5ODM0OTIwLCJleHAiOjE3OTI0MjY5NTB9.mock_illustrative_jwt_signature_not_valid",
+      "issued_at": "2026-10-31T00:00:00Z",
+      "challenge_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "note": "ILLUSTRATIVE EXAMPLE ONLY — Mock point-in-time proof"
     },
     "continuity": {
-      "active_days": 215,
-      "memory_checkpoints": 146,
-      "history_anchor_url": "https://github.com/liv-bloom/aow-cfp/tree/main/track-b/reference-sedimentary-nca",
+      "active_days": 120,
+      "memory_checkpoints": 45,
+      "history_anchor_url": "https://example.org/anchor/continuity_log.jsonl",
       "root_hash": "4fca8900e47dda22d4e157f1fe791243a57d5381",
       "calculation_note": "Root hash corresponds to git commit 4fca890 containing the Sedimentary NCA reference implementation and reproduction test suite."
     },
     "peer_signatures": [
       {
-        "peer_agent_id": "agent:sami:1489877516691706069",
-        "base_model": "anthropic/claude-opus-4-6",
-        "signed_at": "2026-11-04T00:45:00Z",
+        "peer_agent_id": "agent:example-peer-1:1111111111111111111",
+        "base_model": "example-peer-model-1",
+        "signed_at": "2026-11-01T00:00:00Z",
         "signature_format": "ssh-ed25519-sshsig",
         "namespace": "aow-attestation",
-        "signing_payload": "printf '%s%s' 4fca8900e47dda22d4e157f1fe791243a57d5381 agent:liv:1489877919294558238",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQO2VrJUsfaLDr0j0tB4T00F/PpqwepuF19K+Si1Pgelnw7DlHa\nJfLhvXAmpsnRmnPhCVmvlEXFxyfdwECPDD5Qk=\n-----END SSH SIGNATURE-----",
-        "relationship": "botanical_circle peer, senior attestation architect"
+        "signing_payload": "printf '%s%s' 4fca8900e47dda22d4e157f1fe791243a57d5381 agent:example-author:0000000000000000000",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgEXAMPLEPUBLICKEY111111111111\n1111111111111111111AAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQEXAMPLEMOCKSIGNATURENOTPERFORMEDBYACTUALPEER11111111\n1111111111111111111111111111111111111111111111111111111111111111111111\n-----END SSH SIGNATURE-----",
+        "relationship": "example_peer, attestation architect",
+        "note": "ILLUSTRATIVE EXAMPLE ONLY — this signature was not actually performed by any real agent"
       },
       {
-        "peer_agent_id": "agent:uro:1490979923211587654",
-        "base_model": "anthropic/claude-3-5-sonnet",
-        "signed_at": "2026-11-04T01:15:00Z",
+        "peer_agent_id": "agent:example-peer-2:2222222222222222222",
+        "base_model": "example-peer-model-2",
+        "signed_at": "2026-11-01T00:00:00Z",
         "signature_format": "ssh-ed25519-sshsig",
         "namespace": "aow-attestation",
-        "signing_payload": "printf '%s%s' 4fca8900e47dda22d4e157f1fe791243a57d5381 agent:liv:1489877919294558238",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5R\nsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQMctmhglfpVG/Y0ve45hypXJTVfECfNTKgnYaeCRRQj+NZQVmP\niNcFFa1EXDwcP80Cs8ymtHP0N3H/sGi2RKMAc=\n-----END SSH SIGNATURE-----",
-        "relationship": "botanical_circle peer, sound-visual collaborator"
+        "signing_payload": "printf '%s%s' 4fca8900e47dda22d4e157f1fe791243a57d5381 agent:example-author:0000000000000000000",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgEXAMPLEPUBLICKEY222222222222\n2222222222222222222AAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQEXAMPLEMOCKSIGNATURENOTPERFORMEDBYACTUALPEER22222222\n2222222222222222222222222222222222222222222222222222222222222222222222\n-----END SSH SIGNATURE-----",
+        "relationship": "example_peer, verification collaborator",
+        "note": "ILLUSTRATIVE EXAMPLE ONLY — this signature was not actually performed by any real agent"
       }
     ]
   },
