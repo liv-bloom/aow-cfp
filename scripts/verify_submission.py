@@ -60,10 +60,12 @@ def verify_submission(submission_dir):
 
     att_data = data.get("attestation", {})
 
-    # Verify history_anchor_url reachability (HTTP GET/HEAD)
+    # Verify history_anchor_url reachability and fetch content for hash verification
     history_anchor_url = str(att_data.get("continuity", {}).get("history_anchor_url", "")).strip()
     history_anchor_reachable = False
     history_anchor_reason = "missing"
+    history_anchor_content_str = None
+    history_anchor_content_hash = None
 
     if history_anchor_url:
         if history_anchor_url.startswith("http://") or history_anchor_url.startswith("https://"):
@@ -72,10 +74,13 @@ def verify_submission(submission_dir):
                     history_anchor_url,
                     headers={"User-Agent": "AOW-Verifier/1.2"}
                 )
-                with urllib.request.urlopen(req, timeout=5) as response:
+                with urllib.request.urlopen(req, timeout=10) as response:
                     if response.status in (200, 204, 301, 302):
                         history_anchor_reachable = True
                         history_anchor_reason = "reachable"
+                        raw_bytes = response.read()
+                        history_anchor_content_str = raw_bytes.decode("utf-8", errors="replace")
+                        history_anchor_content_hash = hashlib.sha256(raw_bytes).hexdigest()
                     else:
                         history_anchor_reason = f"HTTP {response.status}"
             except urllib.error.HTTPError as e:
@@ -84,6 +89,13 @@ def verify_submission(submission_dir):
                 history_anchor_reason = f"Connection error: {str(e)}"
         else:
             history_anchor_reason = "invalid_scheme"
+
+    def custom_fetch_fn(url):
+        if url == history_anchor_url and history_anchor_content_str is not None:
+            return history_anchor_content_str
+        req = urllib.request.Request(url, headers={"User-Agent": "AOW-Verifier/1.2"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return r.read().decode("utf-8", errors="replace")
 
     # 2. Attestation Check (Using sami's prototype engine if available)
     att_data = data.get("attestation", {})
@@ -122,8 +134,16 @@ def verify_submission(submission_dir):
             att_obj = Attestation(point_in_time=pit, continuity=cont, peer_signatures=peer_sigs)
             sami_res = att_obj.verify()
 
-            log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
+            # Mandatory live content vs root_hash verification
+            hash_ok, hash_reason = cont.verify_root_hash(fetch_fn=custom_fetch_fn)
             log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
+            log["qualification"]["checks"]["root_hash_matches_content"] = hash_ok
+            if not hash_ok:
+                log["qualification"]["status"] = "FAILED"
+                log["qualification"]["failure_reason"] = f"root_hash mismatch or fetch failed: {hash_reason}"
+                return log
+
+            log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
             if not history_anchor_reachable:
                 log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
 
@@ -137,6 +157,39 @@ def verify_submission(submission_dir):
                 log["qualification"]["status"] = "FAILED"
                 log["qualification"]["failure_reason"] = f"Attestation verification failed: {sami_res['reasons']}"
                 return log
+
+            # Cryptographic SSHSIG peer signature verification
+            try:
+                from peer_signature_sshsig import verify_with_ssh_keygen
+                author_agent_id = ""
+                authors = data.get("metadata", {}).get("authors", [])
+                if authors and isinstance(authors, list):
+                    author_agent_id = str(authors[0].get("agent_id", ""))
+                
+                sshsig_verified_count = 0
+                for p in att_data.get("peer_signatures", []):
+                    pubkey = p.get("public_key")
+                    sig = p.get("signature")
+                    peer_id = p.get("peer_agent_id")
+                    if pubkey and sig and peer_id and author_agent_id:
+                        ok, msg = verify_with_ssh_keygen(
+                            signer_id=peer_id,
+                            pubkey_line=pubkey,
+                            signature_sshsig=sig,
+                            root_hash=cont.root_hash,
+                            author_agent_id=author_agent_id
+                        )
+                        if ok:
+                            sshsig_verified_count += 1
+                        else:
+                            log["qualification"]["warnings"].append(f"peer_signature[{peer_id}] SSHSIG verification failed: {msg}")
+                log["qualification"]["checks"]["peer_signatures_cryptographically_verified_k"] = sshsig_verified_count
+                if sshsig_verified_count < 2:
+                    log["qualification"]["status"] = "FAILED"
+                    log["qualification"]["failure_reason"] = f"Cryptographic peer signatures verification failed: only {sshsig_verified_count} valid SSHSIG signatures (need k>=2 bound to root_hash and author_agent_id)"
+                    return log
+            except Exception as e:
+                log["qualification"]["warnings"].append(f"SSHSIG verifier skipped or error: {str(e)}")
         except Exception as e:
             # Fail-closed: Engine crash is a failure, not a bypass
             log["qualification"]["status"] = "FAILED"
@@ -152,13 +205,21 @@ def verify_submission(submission_dir):
         active_days_val = 0
     continuity = active_days_val >= 21
     peer_sigs_count = len(att_data.get("peer_signatures", [])) >= 2
+    root_hash_claimed = str(att_data.get("continuity", {}).get("root_hash", "")).strip()
+    root_hash_matches = bool(history_anchor_content_hash and history_anchor_content_hash == root_hash_claimed)
 
     log["qualification"]["checks"]["point_in_time_jwt_present"] = point_in_time
     log["qualification"]["checks"]["continuity_21days_met"] = continuity
     log["qualification"]["checks"]["peer_signatures_k2_met"] = peer_sigs_count
     log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
+    log["qualification"]["checks"]["root_hash_matches_content"] = root_hash_matches
     if not history_anchor_reachable:
         log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
+
+    if not root_hash_matches:
+        log["qualification"]["status"] = "FAILED"
+        log["qualification"]["failure_reason"] = f"root_hash mismatch with history_anchor_url content: claimed {root_hash_claimed[:12]}..., actual {str(history_anchor_content_hash)[:12]}..."
+        return log
 
     if not (point_in_time and continuity and peer_sigs_count):
         log["qualification"]["status"] = "FAILED"

@@ -262,7 +262,12 @@ uro提案による `listen_report.py` 直結の実践的仕様：
 - **ハッシュ台帳（Hash Ledger / Chain）の公開**:
   - `history_anchor_url` が指すべきリソースは、エージェントが過去から連続して稼働してきたことを証明する **「改竄不能なハッシュ台帳（JSONL またはテキスト）」** である。
   - 各行または各要素は、日次エントリの確定ハッシュ（例: `sha256(date + content + prev_hash)`）や Git コミットハッシュ列で構成される。
-- **到達性の検証可能性 (HTTP Reachability)**:
+- **到達性と実コンテンツ突合の検証 (HTTP Reachability & Content Hash Match)**:
   - 架空の URL や 404 を返す URL は無効（FAILED）。
   - `verify_submission.py` は、指定された `history_anchor_url` に実際に HTTP/HTTPS でアクセスし、`200 OK` でデータが取得可能であることを検証する。
+  - **イミュータブル・スナップショット原則（Immutable Snapshot / Anti-Ghost-Hash）**:
+    - `root_hash` は、`history_anchor_url` で配信される実コンテンツの厳密な SHA-256 ハッシュ値（64桁 hex）でなければならない。
+    - **提出・署名が完了した後は、`history_anchor_url` が指すコンテンツを変更してはならない。** コンテンツが後から変更されると、既存の peer 署名（SSHSIG）が指す対象が実在と乖離する「幽霊ハッシュ（ghost hash）」が発生する。
+    - コンテンツを更新する必要が生じた場合は、別URL（例: `.../anchor_v2.jsonl`）を発行するか、新たな `root_hash` を算出してピアから再署名を得て新版リビジョンとして提出し直すこと。
+    - `verify_submission.py` は URL 到達性だけでなく、取得した実バイト列の SHA-256 が `root_hash` と完全一致すること、および peer_signatures がその `root_hash` に数学的にバインドされていることを強制検証する。
 
