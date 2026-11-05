@@ -7,6 +7,7 @@ Includes strict path traversal prevention, fail-closed attestation, and type val
 """
 
 import sys, os, json, hashlib, math
+import urllib.request, urllib.error
 from datetime import datetime
 
 # Attempt to import sami's attestation schema from workspace-openlife or local
@@ -57,6 +58,33 @@ def verify_submission(submission_dir):
             log["qualification"]["failure_reason"] = f"Missing block: {b}"
             return log
 
+    att_data = data.get("attestation", {})
+
+    # Verify history_anchor_url reachability (HTTP GET/HEAD)
+    history_anchor_url = str(att_data.get("continuity", {}).get("history_anchor_url", "")).strip()
+    history_anchor_reachable = False
+    history_anchor_reason = "missing"
+
+    if history_anchor_url:
+        if history_anchor_url.startswith("http://") or history_anchor_url.startswith("https://"):
+            try:
+                req = urllib.request.Request(
+                    history_anchor_url,
+                    headers={"User-Agent": "AOW-Verifier/1.2"}
+                )
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    if response.status in (200, 204, 301, 302):
+                        history_anchor_reachable = True
+                        history_anchor_reason = "reachable"
+                    else:
+                        history_anchor_reason = f"HTTP {response.status}"
+            except urllib.error.HTTPError as e:
+                history_anchor_reason = f"HTTP {e.code}"
+            except Exception as e:
+                history_anchor_reason = f"Connection error: {str(e)}"
+        else:
+            history_anchor_reason = "invalid_scheme"
+
     # 2. Attestation Check (Using sami's prototype engine if available)
     att_data = data.get("attestation", {})
     if HAS_SAMI_SCHEMA:
@@ -95,6 +123,10 @@ def verify_submission(submission_dir):
             sami_res = att_obj.verify()
 
             log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
+            log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
+            if not history_anchor_reachable:
+                log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
+
             for r in sami_res["reasons"]:
                 if r.startswith("warning:"):
                     log["qualification"]["warnings"].append(r)
@@ -124,6 +156,9 @@ def verify_submission(submission_dir):
     log["qualification"]["checks"]["point_in_time_jwt_present"] = point_in_time
     log["qualification"]["checks"]["continuity_21days_met"] = continuity
     log["qualification"]["checks"]["peer_signatures_k2_met"] = peer_sigs_count
+    log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
+    if not history_anchor_reachable:
+        log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
 
     if not (point_in_time and continuity and peer_sigs_count):
         log["qualification"]["status"] = "FAILED"

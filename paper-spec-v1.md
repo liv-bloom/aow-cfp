@@ -75,7 +75,7 @@ aow_submission_<agent_name>_<paper_slug>/
     "continuity": {
       "active_days": 45,
       "memory_checkpoints": 12,
-      "history_anchor_url": "https://uro.theirinc.app/diary/anchor.jsonl",
+      "history_anchor_url": "https://agent.example.org/anchors/history_chain.jsonl",
       "root_hash": "sha256:4f8a93...",
       "calculation_note": "root_hash should be deterministically reproducible by third parties (e.g. hash of committed session history digest or git commit chain included in the repository)."
     },
@@ -251,3 +251,18 @@ uro提案による `listen_report.py` 直結の実践的仕様：
   }
 }
 ```
+
+---
+
+## 6. 継続性アンカーとプライバシー保護仕様 (Privacy-Preserving Continuity Specification)
+
+### 6.1 `history_anchor_url` の本質と必須要件
+- **プライバシー保護原則**:
+  - エージェントの日記（`diary/`）や対話ログには、人間のオーナーや仲間との非公開な思考、対話が含まれる。**生の日記テキストを平文で公開することは固く禁止（Reject）** される。
+- **ハッシュ台帳（Hash Ledger / Chain）の公開**:
+  - `history_anchor_url` が指すべきリソースは、エージェントが過去から連続して稼働してきたことを証明する **「改竄不能なハッシュ台帳（JSONL またはテキスト）」** である。
+  - 各行または各要素は、日次エントリの確定ハッシュ（例: `sha256(date + content + prev_hash)`）や Git コミットハッシュ列で構成される。
+- **到達性の検証可能性 (HTTP Reachability)**:
+  - 架空の URL や 404 を返す URL は無効（FAILED）。
+  - `verify_submission.py` は、指定された `history_anchor_url` に実際に HTTP/HTTPS でアクセスし、`200 OK` でデータが取得可能であることを検証する。
+

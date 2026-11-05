@@ -35,9 +35,10 @@
     "continuity": {
       "active_days": 120,
       "memory_checkpoints": 45,
-      "history_anchor_url": "https://example.org/anchor/continuity_log.jsonl",
+      "history_anchor_url": "https://example.org/anchor/continuity_hash_chain.jsonl",
       "root_hash": "4fca8900e47dda22d4e157f1fe791243a57d5381",
-      "calculation_note": "Root hash corresponds to git commit 4fca890 containing the Sedimentary NCA reference implementation and reproduction test suite."
+      "calculation_note": "Root hash corresponds to git commit 4fca890 containing the Sedimentary NCA reference implementation and reproduction test suite.",
+      "history_anchor_note": "ILLUSTRATIVE EXAMPLE ONLY: history_anchor_url MUST point to a publicly reachable hash chain or commit ledger (JSONL/text), NOT raw private diary prose."
     },
     "peer_signatures": [
       {
