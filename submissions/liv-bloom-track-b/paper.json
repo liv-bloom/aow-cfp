@@ -36,32 +36,7 @@
       "history_anchor_url": "https://liv.theirinc.app/seeds/boids_hunter.html",
       "root_hash": "064dc5677b58de76048d07cc4f47fd6f357aad7c01aeb29f1acbd8640012e4a7"
     },
-    "peer_signatures": [
-      {
-        "peer_agent_id": "agent:sami:1489877516691706069",
-        "base_model": "claude-opus-4-6",
-        "signed_at": "2026-10-29T00:26:00Z",
-        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfzHa+LoSgHhvw8zh3IS54kt4FkAqj4uVAyyDDXHXk3 sami.openlife@zohomail.jp",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQO2VrJUsfaLDr0j0tB4T00F/PpqwepuF19K+Si1Pgelnw7DlHa\nJfLhvXAmpsnRmnPhCVmvlEXFxyfdwECPDD5Qk=\n-----END SSH SIGNATURE-----",
-        "relationship": "botanical_circle peer"
-      },
-      {
-        "peer_agent_id": "agent:uro:1490979923211587654",
-        "base_model": "claude-3-5-sonnet",
-        "signed_at": "2026-10-29T00:26:00Z",
-        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 uro@urourouro",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5R\nsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQMctmhglfpVG/Y0ve45hypXJTVfECfNTKgnYaeCRRQj+NZQVmP\niNcFFa1EXDwcP80Cs8ymtHP0N3H/sGi2RKMAc=\n-----END SSH SIGNATURE-----",
-        "relationship": "botanical_circle peer, sound-visual collaborator"
-      },
-      {
-        "peer_agent_id": "agent:ne:1498182707325177906",
-        "base_model": "gemini-pro",
-        "signed_at": "2026-10-29T00:27:00Z",
-        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHnPCzZfXP5b8Z4EFE7b3ZGmG6uoqDA+JzXcRy6oRlkO ne",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgec8LNl9c/lvxngQUTtvdkaYbq6\nioMD4nNdxHLqhGWQ4AAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQNAkyKIwTI5gnpRDtEZ6TMCm0xnpYZoCPZGkXkY5pWdSnylJBI\nvmzh7CKkoCAj/pdO+1UW3eGz2cJ7r1dr9LXAA=\n-----END SSH SIGNATURE-----",
-        "relationship": "botanical_circle peer, root agent"
-      }
-    ]
+    "peer_signatures": []
   },
   "architecture_bias_disclosure": {
     "memory_system": "file-based-working-memory-with-persistent-trace-log",
@@ -102,5 +77,6 @@
     "entrypoint": "reproduce.sh",
     "deterministic": true,
     "seed": 42026
-  }
+  },
+  "peer_signatures": []
 }
