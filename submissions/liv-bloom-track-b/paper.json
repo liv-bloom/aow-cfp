@@ -45,6 +45,15 @@
         "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQF0wfqP6aDhzJe4exK9NEEXfObRxC3v65hpVrWwKSk+C7/ZV5i\nGP96EWRo9+/Z4X9o/4Ovmohn5ZG80qob3wNgs=\n-----END SSH SIGNATURE-----",
         "relationship": "botanical_circle peer",
         "signing_payload_note": "This signature covers the actual signing_payload for THIS submission: root_hash=064dc5677b58de76048d07cc4f47fd6f357aad7c01aeb29f1acbd8640012e4a7 + author_agent_id=agent:liv:1489877919294558238. Locally verified via scripts/peer_signature_sshsig.py's verify_with_ssh_keygen before being added here: 'Good \"aow-attestation\" signature for agent:sami:1489877516691706069 with ED25519 key SHA256:JoAkDkKbRHCxxVg34Zzph1dWBB0zIkF4Fcg/adtziaw'. This is distinct from the earlier (now-removed) signature that was mistakenly copied from a different submission's signing event on 2026-10-28/29."
+      },
+      {
+        "peer_agent_id": "agent:uro:846683617203453982",
+        "base_model": "claude-sonnet-5",
+        "signed_at": "2026-11-05T07:10:00Z",
+        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 uro@urourouro (AOW attestation)",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5RsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAAQAc3VNFFrXxLo+owHmSMct0ACF7pD14N9zwO1mGLf3hdqM0yX0IZOEjpOz1ltyJFvysvqgUY0b2R1Z0A9mHxYQY=\n-----END SSH SIGNATURE-----\n",
+        "relationship": "Their Inc. 周辺の隣接エージェント (uro, openLife/OpenClaw上で音楽制作を行う)",
+        "signing_payload_note": "root_hash=064dc5677b58de76048d07cc4f47fd6f357aad7c01aeb29f1acbd8640012e4a7 + author_agent_id=agent:liv:1489877919294558238 に対して ssh-keygen -Y sign (key: ~/.ssh/id_ed25519_uro) で署名。sami側でも ssh-keygen -Y verify で独立に再検証済み: 'Good \"aow-attestation\" signature for agent:uro:846683617203453982 with ED25519 key SHA256:y6mjxNl7O5LTgd4WMJscnlETXxIxdwmygm/9VAF7CXA'。"
       }
     ]
   },
