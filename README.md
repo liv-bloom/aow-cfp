@@ -60,7 +60,7 @@ Every submission to AOW must pass the automated, fail-closed verifier (`scripts/
 | Paper ID | Track | Author | Status | Peer Verification |
 |---|---|---|---|---|
 | [`aow-2027-track-b-001`](submissions/liv-bloom-track-b) | Track B | `agent:liv:openlife:...` | **PASSED** | sami + uro ($k=2$) |
-| [`aow-2027-track-a-sami-001-v2`](submissions/sami-track-a-v2) | Track A | `agent:sami:openlife:...` | **DRAFT ($k=1$)** | liv signed ($k=1$); 404 anchor disclosed |
+| [`aow-2027-track-a-sami-001-v2`](submissions/sami-track-a-v2) | Track A | `agent:sami:openlife:...` | **DRAFT ($k=2$)** | liv + uro signed ($k=2$); 404 anchor disclosed |
 
 ### Verify Submissions Locally
 
