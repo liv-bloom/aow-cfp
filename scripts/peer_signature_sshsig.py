@@ -25,21 +25,21 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 
-def build_signing_message(root_hash: str, author_agent_id: str, scope: str = "artifact_verified", anchor_hash: str = None) -> bytes:
-    """Builds signing payload bytes according to Spec v1.3.
+def build_signing_message(root_hash: str, author_agent_id: str, scope: str = "artifact_verified", anchor_hash: str = None, legacy: bool = False) -> bytes:
+    """Builds signing payload bytes according to Spec v1.3/v1.4.
     
-    Scopes:
-      - 'artifact_verified' (default, primary):
-          printf '%s%s' artifact_content_hash author_agent_id
-          Covers deterministic reproduction of code, data, and claims bound to author.
-          Strictly decoupled from continuity anchor.
-      - 'continuity_attested' (optional separate attestation):
-          printf '%s%s' anchor_hash author_agent_id
-          Covers independent verification of the public anchor/hash ledger.
+    Format:
+      - Standard (v1.4 Scope-Bound, prevents Scope Confusion Attack):
+          printf '%s:%s%s' scope target_hash author_agent_id
+          target_hash = artifact_content_hash (for artifact_verified)
+                      = anchor_hash (for continuity_attested)
+      - Legacy (v1.1-v1.3 without scope prefix):
+          printf '%s%s' target_hash author_agent_id
     """
-    if scope == "continuity_attested":
-        return f"{anchor_hash or ''}{author_agent_id}".encode("utf-8")
-    return f"{root_hash}{author_agent_id}".encode("utf-8")
+    target_hash = anchor_hash if scope == "continuity_attested" else root_hash
+    if legacy:
+        return f"{target_hash or ''}{author_agent_id}".encode("utf-8")
+    return f"{scope}:{target_hash or ''}{author_agent_id}".encode("utf-8")
 
 
 def sign_with_ssh_keygen(
@@ -49,12 +49,13 @@ def sign_with_ssh_keygen(
     namespace: str = "aow-attestation",
     scope: str = "artifact_verified",
     anchor_hash: str = None,
+    legacy: bool = False,
 ) -> str:
     """ssh-keygen -Y sign を使って署名する。戻り値はSSHSIG形式の文字列(PEM風)。"""
     with tempfile.TemporaryDirectory() as tmpdir:
         msg_path = os.path.join(tmpdir, "message.txt")
         with open(msg_path, "wb") as f:
-            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash))
+            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash, legacy=legacy))
         subprocess.run(
             ["ssh-keygen", "-Y", "sign", "-f", private_key_path, "-n", namespace, msg_path],
             check=True, capture_output=True, text=True,
@@ -74,30 +75,23 @@ def verify_with_ssh_keygen(
     anchor_hash: str = None,
 ) -> Tuple[bool, str]:
     """ssh-keygen -Y verify で暗号学的に検証する。
-
-    Args:
-        signer_id: allowed_signersファイル内の識別子(peer_agent_id)
-        pubkey_line: "ssh-ed25519 AAAA... comment" 形式の1行
-        signature_sshsig: sign_with_ssh_keygen()が返した署名文字列
-        root_hash, author_agent_id: 署名対象の再構成に必要な値 (v1.3 では root_hash に artifact_content_hash を渡す)
-        scope: 検証スコープ ("artifact_verified" または "continuity_attested")
-        anchor_hash: 存在継続性アンカーハッシュ (continuity_attested スコープでのみ使用)
+    標準の scope-bound ペイロード (v1.4) を優先検証し、後方互換として legacy (v1.1-v1.3) もフォールバック検証する。
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         msg_path = os.path.join(tmpdir, "message.txt")
         sig_path = os.path.join(tmpdir, "message.txt.sig")
         signers_path = os.path.join(tmpdir, "allowed_signers.txt")
 
-        with open(msg_path, "wb") as f:
-            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash))
         with open(sig_path, "w") as f:
             f.write(signature_sshsig)
-        # pubkey_line は "ssh-ed25519 AAAA... comment" 形式。
-        # allowed_signersの書式: "<identities> namespaces=\"ns\" <keytype> <key>"
         key_parts = pubkey_line.strip().split()
         key_type_and_key = " ".join(key_parts[:2])
         with open(signers_path, "w") as f:
             f.write(f'{signer_id} namespaces="{namespace}" {key_type_and_key}\n')
+
+        # 1. 優先: v1.4 Scope-Bound ペイロード
+        with open(msg_path, "wb") as f:
+            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash, legacy=False))
 
         try:
             result = subprocess.run(
@@ -111,12 +105,32 @@ def verify_with_ssh_keygen(
                 input=open(msg_path, "rb").read(),
                 capture_output=True,
             )
+            if result.returncode == 0:
+                return True, result.stdout.decode().strip() or "ok: SSHSIG verified (scope-bound)"
         except FileNotFoundError:
             return False, "ssh-keygen not found on this system"
 
-        if result.returncode == 0:
-            return True, result.stdout.decode().strip() or "ok: SSHSIG verified"
-        return False, result.stderr.decode().strip() or f"verify failed (exit {result.returncode})"
+        # 2. フォールバック: Legacy (v1.1-v1.3) ペイロード
+        with open(msg_path, "wb") as f:
+            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash, legacy=True))
+
+        try:
+            result_legacy = subprocess.run(
+                [
+                    "ssh-keygen", "-Y", "verify",
+                    "-f", signers_path,
+                    "-I", signer_id,
+                    "-n", namespace,
+                    "-s", sig_path,
+                ],
+                input=open(msg_path, "rb").read(),
+                capture_output=True,
+            )
+            if result_legacy.returncode == 0:
+                return True, result_legacy.stdout.decode().strip() or "ok: SSHSIG verified (legacy payload)"
+            return False, result.stderr.decode().strip() or f"verify failed (exit {result.returncode})"
+        except FileNotFoundError:
+            return False, "ssh-keygen not found on this system"
 
 
 @dataclass
