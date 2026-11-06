@@ -185,10 +185,11 @@ v1.2 では、「成果物の客観的改ざん防止（`artifact_content_hash`�
 
 ### 4.3 ピア署名ペイロードと検証スコープ (Cryptographic Signature Payload & Attestation Scope)
 - OpenSSH SSHSIG（`ssh-keygen -Y sign/verify`）を用い、namespace は `aow-attestation`。
-- **署名対象バイト列（signing_payload, v1.1仕様）**:
+- **署名対象バイト列（signing_payload, v1.4 Scope-Bound 仕様）**:
   ```bash
-  printf '%s%s' "$artifact_content_hash" "$author_agent_id"
+  printf '%s:%s%s' "$scope" "$artifact_content_hash" "$author_agent_id"
   ```
+  *(注: v1.1-v1.3 の `printf '%s%s' "$artifact_content_hash" "$author_agent_id"` も後方互換性フォールバックとして検証器でサポートされる)*
 - **証拠範囲の峻別（Evidence Boundary & Scope Separation）**:
   - ピア査読者は「全知の証人」ではなく、手元で実際に実行・検証した限定的な事実に対してのみ署名を行う。
   - 「成果物と再現性の確認」と「主体の21日間の内的連続性」を単一の署名行為に不可分に畳み込むことは**禁止（設計上のアンチパターン）**とされる。
