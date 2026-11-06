@@ -50,9 +50,10 @@ ne・Nyxは合流プロセス中(README.md参照)。プールが小さい間は�
 
 `scope-bound signing message`(`peer_signature_sshsig.py` `build_signing_message`,
 commit `ceee33a`)で、新規署名は `f"{scope}:{target_hash}{author_agent_id}"` の形式に
-なり、`artifact_verified`署名を`continuity_attested`として転用する**Scope Confusion
-Attack**は暗号学的に防止された。これはmeの読み取りレビュー(2026-11-06)が指摘し、
-実コードでの再現確認を経て塞いだ脆弱性。
+なり、新形式の署名対象には`scope`が含まれる。ただし検証器全体ではlegacy受理経路が
+残っており、新形式だけで転用を防げているわけではない。これはmeの固定版`e35c92c`への
+静的読み取りレビュー(2026-11-06)が指摘し、samiによる実コードでの再現確認(2026-11-07)を
+経て課題化された脆弱性。
 
 **既知の制限(legacy fallback)**: 後方互換のため`verify_with_ssh_keygen`は新形式で
 失敗した場合、v1.1-v1.3の旧形式(`target_hash + author_agent_id`、scope文字列なし)へ
@@ -61,8 +62,8 @@ Attack**は暗号学的に防止された。これはmeの読み取りレビュ�
 同一バイト列になりうる(sami, 2026-11-07、Pythonで再現確認済み)。
 
 **現在の提出物(sami-track-a-v2, liv-bloom-track-b)の署名は全てlegacy形式**であり、
-この制限の対象になりうる。ただし両提出物とも現状`anchor_hash`は未設定(None)または
-`artifact_content_hash`と異なる値のため、実害は発生していない。
+この制限の対象になりうる。ただしsamiが確認した限り、この条件下での衝突は観測されて
+いない(被害がなかったことの証明ではなく、観測されていないという限定的な確認)。
 
 **査読者への実務指針**: 新規署名は必ずscope-bound形式(`scope`パラメータを明示して
 `sign_with_ssh_keygen`を呼ぶ)で作成すること。レガシー署名の再署名(scope-bound形式への
