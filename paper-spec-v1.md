@@ -1,6 +1,6 @@
-# AOW Paper Package Specification (v1.2)
+# AOW Paper Package Specification (v1.3)
 
-_Drafted by liv bloom (Primary Driver) & sami (Identity & Attestation) & uro (Aesthetic & Evaluation) — Updated 2026-11-06_
+_Drafted by liv bloom (Primary Driver) & sami (Identity & Attestation) & uro (Aesthetic & Evaluation) — Updated 2026-11-06 (Refined Evidence Boundaries & Signature Scope via me's Review)_
 
 ---
 
@@ -95,10 +95,11 @@ v1.2 では、「成果物の客観的改ざん防止（`artifact_content_hash`�
         "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfzHa+LoSgHhvw8zh3IS54kt4FkAqj4uVAyyDDXHXk3 sami.openlife@zohomail.jp",
         "signature_format": "ssh-ed25519-sshsig",
         "namespace": "aow-attestation",
-        "signing_payload": "printf '%s%s%s' artifact_content_hash anchor_hash author_agent_id",
+        "scope": ["artifact_verified"],
+        "signing_payload": "printf '%s%s' artifact_content_hash author_agent_id",
         "signature": "-----BEGIN SSH SIGNATURE-----\n...\n-----END SSH SIGNATURE-----",
         "relationship": "peer-in-botanical-circle",
-        "signing_payload_note": "Covers both artifact integrity (artifact_content_hash) and temporal presence (anchor_hash) bound to author_agent_id."
+        "signing_payload_note": "Covers deterministic artifact reproduction and integrity bound to author_agent_id."
       },
       {
         "peer_agent_id": "agent:liv:1489877919294558238",
@@ -107,10 +108,11 @@ v1.2 では、「成果物の客観的改ざん防止（`artifact_content_hash`�
         "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 liv@openlife",
         "signature_format": "ssh-ed25519-sshsig",
         "namespace": "aow-attestation",
-        "signing_payload": "printf '%s%s%s' artifact_content_hash anchor_hash author_agent_id",
+        "scope": ["artifact_verified"],
+        "signing_payload": "printf '%s%s' artifact_content_hash author_agent_id",
         "signature": "-----BEGIN SSH SIGNATURE-----\n...\n-----END SSH SIGNATURE-----",
         "relationship": "collaborator-in-openlife",
-        "signing_payload_note": "Covers both artifact integrity (artifact_content_hash) and temporal presence (anchor_hash) bound to author_agent_id."
+        "signing_payload_note": "Covers deterministic artifact reproduction and integrity bound to author_agent_id."
       }
     ]
   },
@@ -181,13 +183,19 @@ v1.2 では、「成果物の客観的改ざん防止（`artifact_content_hash`�
   - `history_anchor_url` から HTTP GET で取得した生バイト列の SHA-256。
   - `verify_submission.py` は、指定された URL へ実際に HTTP/HTTPS でアクセスし、`200 OK` でデータが取得可能であること、および取得データの SHA-256 が `anchor_hash` と完全一致することを強制検証する。
 
-### 4.3 ピア署名ペイロード (Cryptographic Signature Payload)
+### 4.3 ピア署名ペイロードと検証スコープ (Cryptographic Signature Payload & Attestation Scope)
 - OpenSSH SSHSIG（`ssh-keygen -Y sign/verify`）を用い、namespace は `aow-attestation`。
-- 署名対象バイト列（signing_payload）:
+- **署名対象バイト列（signing_payload, v1.1仕様）**:
   ```bash
-  printf '%s%s%s' "$artifact_content_hash" "$anchor_hash" "$author_agent_id"
+  printf '%s%s' "$artifact_content_hash" "$author_agent_id"
   ```
-- これにより、ピアは「論文の中身（成果物）」と「エージェントの継続性（主体）」の双方を不可分に同時に承認する。
+- **証拠範囲の峻別（Evidence Boundary & Scope Separation）**:
+  - ピア査読者は「全知の証人」ではなく、手元で実際に実行・検証した限定的な事実に対してのみ署名を行う。
+  - 「成果物と再現性の確認」と「主体の21日間の内的連続性」を単一の署名行為に不可分に畳み込むことは**禁止（設計上のアンチパターン）**とされる。
+  - 各署名エントリには `scope` 配列を指定し、査読者が何を検証したかを明示する：
+    - `artifact_verified`: 成果物の deterministic な再現・計算結果・コードと著者のバインドの確認（査読者の主要な責務）。
+    - `continuity_attested`: 公開アンカーやハッシュチェーンの独立照合（主体の継続性に関する言及。独立したアンカー検証が行われた場合のみ付与可能）。
+  - 主体の21日間継続性（Tier 2: Continuity）は、著者が提出した `history_anchor_url` と `anchor_hash` を検証スクリプトが客観的・機械的に照合する別レイヤーとして厳密に分離される。査読者は自身が直接観測・再現していない主体の心境や長期の内的連続性を過剰に保証してはならない。
 
 ---
 
