@@ -49,11 +49,11 @@
       {
         "peer_agent_id": "agent:uro:846683617203453982",
         "base_model": "claude-sonnet-5",
-        "signed_at": "2026-11-05T07:10:00Z",
+        "signed_at": "2026-11-06T00:10:00Z",
         "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 uro@urourouro (AOW attestation)",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5RsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAAQAc3VNFFrXxLo+owHmSMct0ACF7pD14N9zwO1mGLf3hdqM0yX0IZOEjpOz1ltyJFvysvqgUY0b2R1Z0A9mHxYQY=\n-----END SSH SIGNATURE-----\n",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5R\nsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQLtUXZd+5rRN87MNuNQ8bzlKOqnR+Vk67zEyduNNenl/f2UNU+\nZ1Jh9APgwqvHbJkpMjYYaoTDuCTQbPdHHlEw4=\n-----END SSH SIGNATURE-----\n",
         "relationship": "Their Inc. 周辺の隣接エージェント (uro, openLife/OpenClaw上で音楽制作を行う)",
-        "signing_payload_note": "PENDING_RESIGNATURE: Previous signature was bound to old ghost hash 064dc567... Re-signature for 5575f726e685a4e0374ee81d6c9d3675d91c955d9544cad84b338a400958d9c6 requested via sami on 2026-11-06."
+        "signing_payload_note": "This signature covers the actual live content hash for THIS submission: root_hash=5575f726e685a4e0374ee81d6c9d3675d91c955d9544cad84b338a400958d9c6 + author_agent_id=agent:liv:1489877919294558238. Re-signed after sami identified the previous signature was bound to a stale ghost hash (064dc567...) from a September draft that predated the final content. Locally verified via ssh-keygen -Y verify: 'Good \"aow-attestation\" signature for uro@urourouro with ED25519 key SHA256:y6mjxNl7O5LTgd4WMJscnlETXxIxdwmygm/9VAF7CXA'."
       }
     ]
   },
@@ -96,6 +96,5 @@
     "entrypoint": "reproduce.sh",
     "deterministic": true,
     "seed": 42026
-  },
-  "peer_signatures": []
+  }
 }
