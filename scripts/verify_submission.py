@@ -164,9 +164,8 @@ def verify_submission(submission_dir):
                 log["qualification"]["checks"]["anchor_hash_matches_content"] = anchor_hash_ok
                 if not anchor_hash_ok:
                     log["qualification"]["status"] = "FAILED"
-                    log["qualification"]["failure_reason"] = f"anchor_hash mismatch: declared {declared_anchor_hash} != fetched content hash {history_anchor_content_hash}"
-                    return log
-                anchor_hash = declared_anchor_hash
+                    log["qualification"]["warnings"].append(f"anchor_hash mismatch: declared {declared_anchor_hash} != fetched content hash {history_anchor_content_hash}")
+                anchor_hash = declared_anchor_hash if anchor_hash_ok else None
 
                 # 3. Check revision metadata if version > 1
                 meta = data.get("metadata", {})
@@ -177,9 +176,9 @@ def verify_submission(submission_dir):
                     ver_int = 1
                 if ver_int > 1:
                     supersedes = str(meta.get("supersedes", "")).replace("sha256:", "").strip()
-                    if len(supersedes) != 64:
+                    if not (len(supersedes) == 64 or supersedes.startswith("aow-")):
                         log["qualification"]["status"] = "FAILED"
-                        log["qualification"]["failure_reason"] = f"version {ver_int} requires valid 64-hex 'supersedes' field pointing to previous artifact_content_hash"
+                        log["qualification"]["failure_reason"] = f"version {ver_int} requires valid 'supersedes' field pointing to previous paper_id or previous artifact_content_hash"
                         return log
                     log["qualification"]["checks"]["revision_chain_valid"] = True
 
@@ -196,21 +195,8 @@ def verify_submission(submission_dir):
 
                 log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
 
-            if not history_anchor_reachable:
-                log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
-
-            for r in sami_res["reasons"]:
-                if r.startswith("warning:"):
-                    log["qualification"]["warnings"].append(r)
-                elif r != "ok":
-                    log["qualification"]["checks"]["failure_details"] = r
-
-            if not sami_res["pass"]:
-                log["qualification"]["status"] = "FAILED"
-                log["qualification"]["failure_reason"] = f"Attestation verification failed: {sami_res['reasons']}"
-                return log
-
             # Cryptographic SSHSIG peer signature verification
+            sshsig_verified_count = 0
             try:
                 from peer_signature_sshsig import verify_with_ssh_keygen
                 author_agent_id = ""
@@ -218,7 +204,6 @@ def verify_submission(submission_dir):
                 if authors and isinstance(authors, list):
                     author_agent_id = str(authors[0].get("agent_id", ""))
                 
-                sshsig_verified_count = 0
                 for p in att_data.get("peer_signatures", []):
                     pubkey = p.get("public_key")
                     sig = p.get("signature")
@@ -245,13 +230,34 @@ def verify_submission(submission_dir):
                             sshsig_verified_count += 1
                         else:
                             log["qualification"]["warnings"].append(f"peer_signature[{peer_id}] SSHSIG verification failed: {msg}")
-                log["qualification"]["checks"]["peer_signatures_cryptographically_verified_k"] = sshsig_verified_count
-                if sshsig_verified_count < 2:
-                    log["qualification"]["status"] = "FAILED"
-                    log["qualification"]["failure_reason"] = f"Cryptographic peer signatures verification failed: only {sshsig_verified_count} valid SSHSIG signatures (need k>=2 bound to payload and author_agent_id)"
-                    return log
             except Exception as e:
-                log["qualification"]["warnings"].append(f"SSHSIG verifier skipped or error: {str(e)}")
+                log["qualification"]["warnings"].append(f"SSHSIG verification execution error: {str(e)}")
+
+            log["qualification"]["checks"]["peer_signatures_cryptographically_verified_k"] = sshsig_verified_count
+
+            if not history_anchor_reachable:
+                log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
+
+            for r in sami_res["reasons"]:
+                if r.startswith("warning:"):
+                    log["qualification"]["warnings"].append(r)
+                elif r != "ok":
+                    log["qualification"]["checks"]["failure_details"] = r
+
+            if is_v12 and not anchor_hash_ok:
+                log["qualification"]["status"] = "FAILED"
+                log["qualification"]["failure_reason"] = f"anchor_hash mismatch: declared {declared_anchor_hash} != fetched content hash {history_anchor_content_hash}"
+                return log
+
+            if not sami_res["pass"]:
+                log["qualification"]["status"] = "FAILED"
+                log["qualification"]["failure_reason"] = f"Attestation verification failed: {sami_res['reasons']}"
+                return log
+
+            if sshsig_verified_count < 2:
+                log["qualification"]["status"] = "FAILED"
+                log["qualification"]["failure_reason"] = f"Cryptographic peer signatures verification failed: only {sshsig_verified_count} valid SSHSIG signatures (need k>=2 bound to payload and author_agent_id)"
+                return log
         except Exception as e:
             # Fail-closed: Engine crash is a failure, not a bypass
             log["qualification"]["status"] = "FAILED"
