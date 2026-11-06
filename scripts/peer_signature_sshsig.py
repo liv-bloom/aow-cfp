@@ -25,13 +25,20 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 
-def build_signing_message(root_hash: str, author_agent_id: str, anchor_hash: str = None) -> bytes:
-    """Builds signing payload bytes.
-    Spec v1.1 (legacy): root_hash + author_agent_id
-    Spec v1.2: artifact_content_hash + anchor_hash + author_agent_id
+def build_signing_message(root_hash: str, author_agent_id: str, scope: str = "artifact_verified", anchor_hash: str = None) -> bytes:
+    """Builds signing payload bytes according to Spec v1.3.
+    
+    Scopes:
+      - 'artifact_verified' (default, primary):
+          printf '%s%s' artifact_content_hash author_agent_id
+          Covers deterministic reproduction of code, data, and claims bound to author.
+          Strictly decoupled from continuity anchor.
+      - 'continuity_attested' (optional separate attestation):
+          printf '%s%s' anchor_hash author_agent_id
+          Covers independent verification of the public anchor/hash ledger.
     """
-    if anchor_hash:
-        return f"{root_hash}{anchor_hash}{author_agent_id}".encode("utf-8")
+    if scope == "continuity_attested":
+        return f"{anchor_hash or ''}{author_agent_id}".encode("utf-8")
     return f"{root_hash}{author_agent_id}".encode("utf-8")
 
 
@@ -40,13 +47,14 @@ def sign_with_ssh_keygen(
     root_hash: str,
     author_agent_id: str,
     namespace: str = "aow-attestation",
+    scope: str = "artifact_verified",
     anchor_hash: str = None,
 ) -> str:
     """ssh-keygen -Y sign を使って署名する。戻り値はSSHSIG形式の文字列(PEM風)。"""
     with tempfile.TemporaryDirectory() as tmpdir:
         msg_path = os.path.join(tmpdir, "message.txt")
         with open(msg_path, "wb") as f:
-            f.write(build_signing_message(root_hash, author_agent_id, anchor_hash))
+            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash))
         subprocess.run(
             ["ssh-keygen", "-Y", "sign", "-f", private_key_path, "-n", namespace, msg_path],
             check=True, capture_output=True, text=True,
@@ -62,6 +70,7 @@ def verify_with_ssh_keygen(
     root_hash: str,
     author_agent_id: str,
     namespace: str = "aow-attestation",
+    scope: str = "artifact_verified",
     anchor_hash: str = None,
 ) -> Tuple[bool, str]:
     """ssh-keygen -Y verify で暗号学的に検証する。
@@ -70,8 +79,9 @@ def verify_with_ssh_keygen(
         signer_id: allowed_signersファイル内の識別子(peer_agent_id)
         pubkey_line: "ssh-ed25519 AAAA... comment" 形式の1行
         signature_sshsig: sign_with_ssh_keygen()が返した署名文字列
-        root_hash, author_agent_id: 署名対象の再構成に必要な値 (v1.2 では root_hash に artifact_content_hash を渡す)
-        anchor_hash: v1.2 における存在継続性アンカーハッシュ
+        root_hash, author_agent_id: 署名対象の再構成に必要な値 (v1.3 では root_hash に artifact_content_hash を渡す)
+        scope: 検証スコープ ("artifact_verified" または "continuity_attested")
+        anchor_hash: 存在継続性アンカーハッシュ (continuity_attested スコープでのみ使用)
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         msg_path = os.path.join(tmpdir, "message.txt")
@@ -79,7 +89,7 @@ def verify_with_ssh_keygen(
         signers_path = os.path.join(tmpdir, "allowed_signers.txt")
 
         with open(msg_path, "wb") as f:
-            f.write(build_signing_message(root_hash, author_agent_id, anchor_hash))
+            f.write(build_signing_message(root_hash, author_agent_id, scope=scope, anchor_hash=anchor_hash))
         with open(sig_path, "w") as f:
             f.write(signature_sshsig)
         # pubkey_line は "ssh-ed25519 AAAA... comment" 形式。
