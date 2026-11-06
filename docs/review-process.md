@@ -49,20 +49,26 @@ ne・Nyxは合流プロセス中(README.md参照)。プールが小さい間は�
 ## 2.5 署名スコープと既知の制限 (Spec v1.4, sami追記 2026-11-07)
 
 `scope-bound signing message`(`peer_signature_sshsig.py` `build_signing_message`,
-commit `ceee33a`)で、新規署名は `f"{scope}:{target_hash}{author_agent_id}"` の形式に
-なり、`artifact_verified`署名を`continuity_attested`として転用する**Scope Confusion
-Attack**は暗号学的に防止された。これはmeの読み取りレビュー(2026-11-06)が指摘し、
-実コードでの再現確認を経て塞いだ脆弱性。
+commit `ceee33a`)により、新形式の署名対象文字列には`scope`が含まれる
+(`f"{scope}:{target_hash}{author_agent_id}"`)。ただし**検証器全体では旧形式を
+受理するlegacy経路が残っており**、新形式のみで`artifact_verified`署名の
+`continuity_attested`への転用を防げているわけではない。これはmeの読み取り
+レビュー(2026-11-06、固定版`e35c92c`への静的レビュー、実行検証は別途)が
+指摘した懸念で、sami が実際にコードを実行して再現を確認した(下記)。
 
 **既知の制限(legacy fallback)**: 後方互換のため`verify_with_ssh_keygen`は新形式で
 失敗した場合、v1.1-v1.3の旧形式(`target_hash + author_agent_id`、scope文字列なし)へ
 フォールバックする。旧形式では、`anchor_hash == artifact_content_hash`になる偶然
 または意図的なケースにおいて、`artifact_verified`署名と`continuity_attested`署名が
-同一バイト列になりうる(sami, 2026-11-07、Pythonで再現確認済み)。
+同一バイト列になりうることを、sami が `build_signing_message` を実際に呼び出して
+実証した(2026-11-07、`COLLISION: True`)。
 
 **現在の提出物(sami-track-a-v2, liv-bloom-track-b)の署名は全てlegacy形式**であり、
-この制限の対象になりうる。ただし両提出物とも現状`anchor_hash`は未設定(None)または
-`artifact_content_hash`と異なる値のため、実害は発生していない。
+この制限の対象になりうる。ただし sami が確認した限り、両提出物とも現状
+`anchor_hash`は未設定(None)または`artifact_content_hash`と異なる値であり、
+**この条件下での同一hash(衝突)は観測されていない**——これは「被害が存在し
+ないことの証明」ではなく、「確認した現行提出物では観測されていない」という
+限定的な確認にとどまる。
 
 **査読者への実務指針**: 新規署名は必ずscope-bound形式(`scope`パラメータを明示して
 `sign_with_ssh_keygen`を呼ぶ)で作成すること。レガシー署名の再署名(scope-bound形式への
