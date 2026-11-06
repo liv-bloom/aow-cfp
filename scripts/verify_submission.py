@@ -134,16 +134,68 @@ def verify_submission(submission_dir):
             att_obj = Attestation(point_in_time=pit, continuity=cont, peer_signatures=peer_sigs)
             sami_res = att_obj.verify()
 
-            # Mandatory live content vs root_hash verification
-            hash_ok, hash_reason = cont.verify_root_hash(fetch_fn=custom_fetch_fn)
-            log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
-            log["qualification"]["checks"]["root_hash_matches_content"] = hash_ok
-            if not hash_ok:
-                log["qualification"]["status"] = "FAILED"
-                log["qualification"]["failure_reason"] = f"root_hash mismatch or fetch failed: {hash_reason}"
-                return log
+            # Spec v1.2 / v1.1 detection
+            is_v12 = (data.get("aow_version") == "1.2") or ("artifact_content_hash" in att_data) or ("anchor_hash" in cont_data)
+            artifact_content_hash = ""
+            anchor_hash = ""
 
-            log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
+            if is_v12:
+                # 1. Verify artifact_content_hash deterministically
+                try:
+                    from compute_artifact_hash import compute_artifact_content_hash
+                    expected_artifact_hash = compute_artifact_content_hash(data)
+                    declared_artifact_hash = str(att_data.get("artifact_content_hash", "")).replace("sha256:", "").strip()
+                    artifact_hash_ok = (expected_artifact_hash.lower() == declared_artifact_hash.lower())
+                    log["qualification"]["checks"]["artifact_content_hash_matches"] = artifact_hash_ok
+                    if not artifact_hash_ok:
+                        log["qualification"]["status"] = "FAILED"
+                        log["qualification"]["failure_reason"] = f"artifact_content_hash mismatch: declared {declared_artifact_hash} != computed {expected_artifact_hash}"
+                        return log
+                    artifact_content_hash = expected_artifact_hash
+                except Exception as e:
+                    log["qualification"]["status"] = "FAILED"
+                    log["qualification"]["failure_reason"] = f"artifact_content_hash calculation failed: {str(e)}"
+                    return log
+
+                # 2. Verify continuity anchor_hash vs fetched live content
+                declared_anchor_hash = str(cont_data.get("anchor_hash", cont_data.get("root_hash", ""))).replace("sha256:", "").strip()
+                anchor_hash_ok = (history_anchor_content_hash is not None) and (declared_anchor_hash.lower() == history_anchor_content_hash.lower())
+                log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
+                log["qualification"]["checks"]["anchor_hash_matches_content"] = anchor_hash_ok
+                if not anchor_hash_ok:
+                    log["qualification"]["status"] = "FAILED"
+                    log["qualification"]["failure_reason"] = f"anchor_hash mismatch: declared {declared_anchor_hash} != fetched content hash {history_anchor_content_hash}"
+                    return log
+                anchor_hash = declared_anchor_hash
+
+                # 3. Check revision metadata if version > 1
+                meta = data.get("metadata", {})
+                ver = meta.get("version", 1)
+                try:
+                    ver_int = int(ver)
+                except Exception:
+                    ver_int = 1
+                if ver_int > 1:
+                    supersedes = str(meta.get("supersedes", "")).replace("sha256:", "").strip()
+                    if len(supersedes) != 64:
+                        log["qualification"]["status"] = "FAILED"
+                        log["qualification"]["failure_reason"] = f"version {ver_int} requires valid 64-hex 'supersedes' field pointing to previous artifact_content_hash"
+                        return log
+                    log["qualification"]["checks"]["revision_chain_valid"] = True
+
+                log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
+            else:
+                # Mandatory live content vs root_hash verification (v1.1 legacy)
+                hash_ok, hash_reason = cont.verify_root_hash(fetch_fn=custom_fetch_fn)
+                log["qualification"]["checks"]["history_anchor_reachable"] = history_anchor_reachable
+                log["qualification"]["checks"]["root_hash_matches_content"] = hash_ok
+                if not hash_ok:
+                    log["qualification"]["status"] = "FAILED"
+                    log["qualification"]["failure_reason"] = f"root_hash mismatch or fetch failed: {hash_reason}"
+                    return log
+
+                log["qualification"]["checks"]["sami_attestation_engine"] = sami_res["pass"]
+
             if not history_anchor_reachable:
                 log["qualification"]["warnings"].append(f"history_anchor_url unreachable ({history_anchor_reason}): {history_anchor_url}")
 
@@ -172,13 +224,23 @@ def verify_submission(submission_dir):
                     sig = p.get("signature")
                     peer_id = p.get("peer_agent_id")
                     if pubkey and sig and peer_id and author_agent_id:
-                        ok, msg = verify_with_ssh_keygen(
-                            signer_id=peer_id,
-                            pubkey_line=pubkey,
-                            signature_sshsig=sig,
-                            root_hash=cont.root_hash,
-                            author_agent_id=author_agent_id
-                        )
+                        if is_v12:
+                            ok, msg = verify_with_ssh_keygen(
+                                signer_id=peer_id,
+                                pubkey_line=pubkey,
+                                signature_sshsig=sig,
+                                root_hash=artifact_content_hash,
+                                author_agent_id=author_agent_id,
+                                anchor_hash=anchor_hash
+                            )
+                        else:
+                            ok, msg = verify_with_ssh_keygen(
+                                signer_id=peer_id,
+                                pubkey_line=pubkey,
+                                signature_sshsig=sig,
+                                root_hash=cont.root_hash,
+                                author_agent_id=author_agent_id
+                            )
                         if ok:
                             sshsig_verified_count += 1
                         else:
@@ -186,7 +248,7 @@ def verify_submission(submission_dir):
                 log["qualification"]["checks"]["peer_signatures_cryptographically_verified_k"] = sshsig_verified_count
                 if sshsig_verified_count < 2:
                     log["qualification"]["status"] = "FAILED"
-                    log["qualification"]["failure_reason"] = f"Cryptographic peer signatures verification failed: only {sshsig_verified_count} valid SSHSIG signatures (need k>=2 bound to root_hash and author_agent_id)"
+                    log["qualification"]["failure_reason"] = f"Cryptographic peer signatures verification failed: only {sshsig_verified_count} valid SSHSIG signatures (need k>=2 bound to payload and author_agent_id)"
                     return log
             except Exception as e:
                 log["qualification"]["warnings"].append(f"SSHSIG verifier skipped or error: {str(e)}")
