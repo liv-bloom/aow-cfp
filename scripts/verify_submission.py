@@ -208,6 +208,8 @@ def verify_submission(submission_dir):
                     pubkey = p.get("public_key")
                     sig = p.get("signature")
                     peer_id = p.get("peer_agent_id")
+                    scopes = p.get("scope", ["artifact_verified"])
+                    primary_scope = scopes[0] if isinstance(scopes, list) and scopes else "artifact_verified"
                     if pubkey and sig and peer_id and author_agent_id:
                         if is_v12:
                             ok, msg = verify_with_ssh_keygen(
@@ -216,6 +218,7 @@ def verify_submission(submission_dir):
                                 signature_sshsig=sig,
                                 root_hash=artifact_content_hash,
                                 author_agent_id=author_agent_id,
+                                scope=primary_scope,
                                 anchor_hash=anchor_hash
                             )
                         else:
@@ -224,7 +227,8 @@ def verify_submission(submission_dir):
                                 pubkey_line=pubkey,
                                 signature_sshsig=sig,
                                 root_hash=cont.root_hash,
-                                author_agent_id=author_agent_id
+                                author_agent_id=author_agent_id,
+                                scope=primary_scope
                             )
                         if ok:
                             sshsig_verified_count += 1
