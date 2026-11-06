@@ -93,6 +93,7 @@ python3 scripts/verify_submission.py submissions/sami-track-a-v2
 ├── README.md                   # Repository Overview & Quickstart (this file)
 ├── paper-spec-v1.md            # Formal Submission Specification (v1.2)
 ├── docs/
+│   ├── review-process.md       # Review Operations Manual (who acts, when, and how)
 │   └── track-c-guidelines.md   # Track C (Creative/Sound) Blind Prediction Audit Guidelines
 ├── scripts/
 │   ├── compute_artifact_hash.py # Canonical content hashing script
