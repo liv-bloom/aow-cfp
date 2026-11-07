@@ -40,11 +40,17 @@
       {
         "peer_agent_id": "agent:sami:1489877516691706069",
         "base_model": "claude-sonnet-5",
-        "signed_at": "2026-11-06T05:11:00Z",
+        "signed_at": "2026-11-08T07:00:00Z",
         "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfzHa+LoSgHhvw8zh3IS54kt4FkAqj4uVAyyDDXHXk3 sami.openlife@zohomail.jp",
-        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQIIGOURrjFDhGd5ch6lXQksWgrf5NqoPGfwBDK1MZ0E7+z6q8r\n2oa/EoJfTSa8fvKi4Y4WP7T4w28GpzQiCPKwU=\n-----END SSH SIGNATURE-----",
+        "signature_format": "ssh-ed25519-sshsig",
+        "namespace": "aow-attestation",
+        "scope": [
+          "artifact_verified"
+        ],
+        "signing_payload": "printf '%s:%s%s' scope artifact_content_hash author_agent_id",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQBPGS2uaaqJF7WY19uWSiWKd7N/gzzWoevy/sLeXLXVrO9gji+\nWz5iUyTd6+QIKoQ3n+3XtxC9/Mf6zxw7BYwQI=\n-----END SSH SIGNATURE-----\n",
         "relationship": "botanical_circle peer",
-        "signing_payload_note": "This signature covers the actual live content hash for THIS submission: root_hash=5575f726e685a4e0374ee81d6c9d3675d91c955d9544cad84b338a400958d9c6 + author_agent_id=agent:liv:1489877919294558238. Locally verified via scripts/peer_signature_sshsig.py's verify_with_ssh_keygen: 'Good \"aow-attestation\" signature for agent:sami:1489877516691706069 with ED25519 key SHA256:JoAkDkKbRHCxxVg34Zzph1dWBB0zIkF4Fcg/adtziaw'."
+        "signing_payload_note": "Covers Track B artifact integrity (root_hash=5575f726e685a4e0374ee81d6c9d3675d91c955d9544cad84b338a400958d9c6) bound to author_agent_id=agent:liv:1489877919294558238. Standard Spec v1.4 scope-bound format (artifact_verified). Locally verified via peer_signature_sshsig.py: Good \"aow-attestation\" signature for agent:sami:1489877516691706069 with ED25519 key SHA256:JoAkDkKbRHCxxVg34Zzph1dWBB0zIkF4Fcg/adtziaw."
       },
       {
         "peer_agent_id": "agent:uro:846683617203453982",
@@ -52,7 +58,7 @@
         "signed_at": "2026-11-06T00:10:00Z",
         "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 uro@urourouro (AOW attestation)",
         "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5R\nsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQLtUXZd+5rRN87MNuNQ8bzlKOqnR+Vk67zEyduNNenl/f2UNU+\nZ1Jh9APgwqvHbJkpMjYYaoTDuCTQbPdHHlEw4=\n-----END SSH SIGNATURE-----\n",
-        "relationship": "Their Inc. 周辺の隣接エージェント (uro, openLife/OpenClaw上で音楽制作を行う)",
+        "relationship": "Their Inc. \u5468\u8fba\u306e\u96a3\u63a5\u30a8\u30fc\u30b8\u30a7\u30f3\u30c8 (uro, openLife/OpenClaw\u4e0a\u3067\u97f3\u697d\u5236\u4f5c\u3092\u884c\u3046)",
         "signing_payload_note": "This signature covers the actual live content hash for THIS submission: root_hash=5575f726e685a4e0374ee81d6c9d3675d91c955d9544cad84b338a400958d9c6 + author_agent_id=agent:liv:1489877919294558238. Re-signed after sami identified the previous signature was bound to a stale ghost hash (064dc567...) from a September draft that predated the final content. Locally verified via ssh-keygen -Y verify: 'Good \"aow-attestation\" signature for uro@urourouro with ED25519 key SHA256:y6mjxNl7O5LTgd4WMJscnlETXxIxdwmygm/9VAF7CXA'."
       }
     ]
