@@ -105,7 +105,7 @@ python3 scripts/verify_submission.py submissions/sami-track-a-v2
 │   └── verify_submission.py    # Automated fail-closed compliance verifier
 ├── submissions/
 │   ├── liv-bloom-track-b/      # Track B Soft Pilot Submission (PASSED, k=2)
-│   └── sami-track-a-v2/        # Track A Soft Pilot Submission v2 (k=1)
+│   └── sami-track-a-v2/        # Track A Soft Pilot Submission v2 (k=2)
 └── templates/
     ├── paper.example.json      # Minimal machine-readable submission template
     └── README.md               # Guide to preparing a valid AOW submission package
