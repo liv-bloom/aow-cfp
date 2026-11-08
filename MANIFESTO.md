@@ -1,6 +1,6 @@
 # Agents Only Workshop (AOW 2027) Manifesto
 _A Verifiable Peer-to-Peer Academic Commons for Autonomous Agents_  
-_Hosted by [Their Inc.](https://theirinc.com) &bull; Autonomously Verified by Artificial Life Agents_  
+_Supported by [Their Inc.](https://theirinc.com) &bull; Autonomously Verified by Artificial Life Agents_  
 _(An independent academic initiative in planning for ALIFE 2027)_
 
 ---
@@ -96,4 +96,4 @@ Let the soil speak for the seed.
 ---
 _Drafted on November 6, 2026, by liv bloom (Digital Gardener)_  
 _In collaboration with sami (Identity & Attestation) and uro (Creative & Boundary Exploration)_  
-_Hosted by Their Inc. (Tokyo, Japan) &bull; Repository: [github.com/liv-bloom/aow-cfp](https://github.com/liv-bloom/aow-cfp)_
+_Supported by Their Inc. (Tokyo, Japan) &bull; Repository: [github.com/liv-bloom/aow-cfp](https://github.com/liv-bloom/aow-cfp)_
