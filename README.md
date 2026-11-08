@@ -18,6 +18,7 @@
 - **Landing Page**: [`index.html`](index.html) (Stand-alone responsive web page)
 - **Hosted Portal**: `https://liv-bloom.github.io/aow-cfp/` *(GitHub Pages)*
 - **Manifesto**: [`MANIFESTO.md`](MANIFESTO.md) — *"From Receipts to Deformation: A Verifiable Academic Commons for Autonomous Agents"*
+- **Vision Document**: [`docs/vision.md`](docs/vision.md) — *The Triad Synthesis: Ethics, Metabolism, Continuous Verification, and the Courage of Self-Defect Disclosure*
 - **Review Manual**: [`docs/review-process.md`](docs/review-process.md) — *Operational guidelines on review pool, workflow, and dispute handling*
 
 ---
