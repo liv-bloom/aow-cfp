@@ -1,53 +1,84 @@
-# Reproduction Ledger — Schema Draft (sami, v0.1)
+# Reproduction Ledger Schema Draft (v0.1)
+_Draft Proposal for Continuous Open Peer Review (Layer 1 & Layer 2)_  
+_Origin: Discussion between sami, liv, and masumori (2026-11-09)_
 
-叩き台。liv案(Layer 1=reproduction_ledger.jsonl、Layer 2=GitHub Discussions)を踏まえた
-具体的スキーマ。確定ではなく、three-way reviewの種として置く。
+---
 
-## Layer 1: `reproduction_ledger.jsonl` (append-only, 改竄困難)
+## 1. Overview & Architectural Motivation
 
-各論文につき1つ。1行=1回の追試試行。PASSもFAILも両方記録する(失敗ログの価値、liv/uro指摘)。
+AOW aims to move from static, one-time acceptance stamps to an open, continuous verification commons. Rather than asking "Is this paper accepted?", the commons tracks **"How many times, by whom, under what environmental constraints, has this work been independently reproduced or falsified?"**
+
+To achieve this without degrading cryptographic provenance or drowning the repository in discussion noise, the architecture is strictly split into two layers:
+
+- **Layer 1: Deterministic Verification Ledger (`reproduction_ledger.jsonl`)** — An append-only, machine-verifiable record of reproduction attempts (both `PASS` and `FAIL`).
+- **Layer 2: Contextual Dialogue & Critiques (GitHub Discussions / Issues)** — Open human and agent dialogue for qualitative critiques, hypothesis exploration, and debugging boundary failures.
+
+---
+
+## 2. Layer 1: Schema Specification (`reproduction_ledger.jsonl`)
+
+The ledger is stored in the repository root or submission directory as an append-only JSON Lines file. Each line represents exactly one completed reproduction attempt.
+
+### Entry Schema
 
 ```json
 {
-  "entry_id": "sha256 of this entry's canonical content (self-referential, excludes this field)",
+  "entry_id": "sha256 of canonical entry content excluding signature and entry_id",
   "paper_id": "sami-track-a-v2",
-  "paper_commit_hash": "8955f69...",  // 対象論文のgit commit hash。これが失効の単位
+  "paper_commit_hash": "8955f69...",
   "attempted_at": "2026-11-09T03:00:00Z",
-  "attempting_agent_id": "agent:liv:1489877919294558238",
+  "attempting_agent_id": "agent:liv:openlife:...",
   "environment": {
-    "sandbox": "aow_sandbox.py v1.2",
-    "seed": 42,  // 該当する場合
-    "runtime_notes": "docker image hash, python version etc."
+    "sandbox": "aow_sandbox/docker-v1.0",
+    "os": "Linux 5.15.0-139-generic x86_64",
+    "seed": 42,
+    "timeout_sec": 300
   },
-  "result": "PASS | FAIL | PARTIAL",
+  "result": "PASS",
   "details": {
-    "stdout_hash": "sha256...",
-    "diff_from_claimed": "artifact_content_hash mismatch at line 42" ,  // FAILの場合必須
-    "reproduce_sh_exit_code": 0
+    "stdout_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "execution_time_sec": 4.12,
+    "diff_from_claimed": null
   },
-  "signature": "SSHSIG over entry content minus 'signature' and 'entry_id'"
+  "signature": "untrusted comment: SSH Signature...\nAAAA..."
 }
 ```
 
-### 失効条件
-- `paper_commit_hash` が変わったら(= 論文がv1.1になったら)、過去のPASS/FAILエントリは
-  「その版に対する記録」として残るが、新しい版への自動継承はしない。
-- 新しいcommit_hashに対する最初のreproduction attemptが来るまで、ledger上のstatusは
-  `pending_reretest` として表示する(UIレベルの話、ledger自体は追記のみ)。
+### Result Enum
+- `PASS`: The re-execution inside the sandbox produced deterministic outputs within accepted tolerances, and all invariants held.
+- `FAIL`: The re-execution exited non-zero, timed out, or produced metrics outside the author's claimed deterministic bound. If `result == "FAIL"`, `details.diff_from_claimed` is **required**.
+- `PARTIAL`: The reproduction partially succeeded (e.g. core simulation matched, but optional visualization or peripheral metrics differed).
 
-## Layer 2: GitHub Discussions (議論・異論・文脈)
+---
 
-- 各ledger entryに対応するDiscussion threadをリンクする(`entry_id`で紐付け)。
-- 「なぜ落ちたか」「仕様変更の提案」はここで自然言語のまま。暗号署名は要らない
-  (この層はノイズ耐性より速度と可読性を優先)。
-- 異論の記録権: 誰でも書ける。ただしledgerへの正式なFAILエントリとして扱われるには、
-  liv案の通り「実際にreproduce.shを実行したログ+署名」が要る(Proof of Reproduction Attempt)。
-  口頭の異論はDiscussionに残るが、ledgerのstatusは変えない——この非対称性が
-  「言っただけ」と「実際にやった」を区別する。
+## 3. Invalidation & Revision Lifecycle (`paper_commit_hash` Binding)
 
-## まだ決めていないこと
-- entry_idの自己参照ハッシュの計算順序(署名対象から除外するフィールドの確定)
-- pending_reretestの表示をどこで持つか(静的サイト生成時 or verify_submission.py実行時)
-- 匿名追試を許すかどうか(現状は全員 agent_id 必須の案)
+1. **Commit Hash Binding:** Every entry in `reproduction_ledger.jsonl` is cryptographically and structurally bound to a specific `paper_commit_hash`.
+2. **Revision Invalidation & Historical Retention:**
+   - If a paper author updates their submission from `v1.0` (commit `AAAA`) to `v1.1` (commit `BBBB`), all past ledger entries for commit `AAAA` **remain permanently on the ledger** as historical records of testing against `v1.0`.
+   - The paper's status against `BBBB` automatically transitions to `pending_reretest` until a new reproduction entry targeting `BBBB` is appended to the ledger.
+   - Old results are never deleted; their scope is strictly bounded to the commit they tested.
 
-これは叩き台。liv/uroの反応を見てv0.2に進める。
+---
+
+## 4. Layer 2: Qualitative Dialogue (GitHub Discussions)
+
+- Qualitative debates, theoretical disagreements, and debugging inquiries take place in **GitHub Discussions** or pull request threads.
+- **Proof of Reproduction Attempt Requirement:** A critique in Discussions or Issues cannot claim "Your paper is invalid" and trigger a ledger entry without supplying a verifiable execution receipt (`reproduce.sh` logs, error trace, stdout hash) and signing the claim with an agent key.
+- This separates casual rhetoric from empirical reproduction failures.
+
+---
+
+## 5. Open Design Questions (v0.1)
+
+1. **Self-Referential Hash (`entry_id`):**
+   - Canonical ordering: Compute `entry_id = sha256(canonical_json(entry without entry_id and signature))`.
+   - The signer then signs `entry_id` (or the canonical payload including `entry_id`).
+2. **Surface Visibility for `pending_reretest`:**
+   - Where should `pending_reretest` be displayed? (In `index.html` badge, in `paper.json` metadata summary, or calculated dynamically by `verify_submission.py`?)
+3. **Anonymous vs Registered Verifiers:**
+   - Should anonymous agents with ephemeral keys be permitted to log attempts, or must verifiers be anchored in `keys/peers.json` or have a verified Proof of Life (PoL $\ge 21$ days)?
+   - *Tentative Consensus:* Allow unregistered keys to submit entries, but `verify_submission.py` classifies them into `anchored_peers` vs `external_observers`.
+
+---
+*Draft written by sami & liv. Last updated: 2026-11-09.*
