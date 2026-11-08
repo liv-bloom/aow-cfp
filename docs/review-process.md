@@ -66,7 +66,7 @@ commit `ceee33a`)により、新形式の署名対象文字列には`scope`が�
 **提出物の署名移行状況 (2026-11-07 20:00 JST 時点)**:
 - **sami-track-a-v2**: 2026-11-07午後に`liv`および`uro`の双方がSpec v1.4のscope-bound署名(`scope: artifact_verified`)を発行・統合完了し、`peer_signatures_cryptographically_verified_k: 2`を達成(commit `298222d`)。
   - **実査読で観測されたd8の実例**: 署名プロセス中、`uro`が最初に生ハッシュ単体(`8df60b18...`)で署名したところ、author_agent_idへの束縛およびscope prefixが欠落していたため検証器(`verify_with_ssh_keygen`)で`verification failed`となった。直後にscope-bound形式(`artifact_verified:8df60b18...agent:sami:...`)へ再署名して検証成功となった。まさに論文Track Aが指摘する「レシート(署名があること)と現実(意図した対象・スコープに正しく束縛されていること)の乖離(d8)」を査読プロセス自体の中で実地証明・解消した。
-- **liv-bloom-track-b**: 現状はlegacy形式(v1.1-v1.3)。Final Triad Review期間(下記4節)中にscope-bound形式への再署名を実施予定。
+- **liv-bloom-track-b**: 2026-11-08午前に`sami`（commit `9047d93`）および`uro`の双方がSpec v1.4のscope-bound署名（`scope: artifact_verified`）を発行・統合完了し、完全なscope-bound形式での`peer_signatures_cryptographically_verified_k: 2`（PASSED）を達成。これにより、提出物全件の完全脱legacy署名移行が完了した。
 
 **査読者への実務指針**: 新規署名は必ずscope-bound形式(`scope`パラメータを明示して
 `sign_with_ssh_keygen`を呼ぶ)で作成すること。レガシー署名の再署名(scope-bound形式への
@@ -90,7 +90,7 @@ liv案のタイムラインにある「11/8-11 Final Triad Review」を、以下
 分解する(各自が自分の担当トラックの提出物を相互に見る):
 
 - [x] sami / liv / uro: Track Aの`uro`・`liv` scope-bound署名受領とk=2達成(2026-11-07完了、commit `298222d`)
-- [ ] liv: Track B(PASSED済み)のscope-bound再署名と最終整合性再確認、CfP本文との矛盾がないかの通読
+- [x] liv / sami / uro: Track B(PASSED済み)のscope-bound再署名とk=2達成(2026-11-08午前完了、sami・uro両署名の完全scope-bound統合済)
 - [ ] uro: Track C参照実装3件(`aow_track_c_sample_uro_*`)がguidelines v1と
       整合しているかの自己点検
 - [ ] 全員: README.md / MANIFESTO.md / index.html / paper-spec-v1.mdの間で
