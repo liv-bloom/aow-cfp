@@ -1,0 +1,17 @@
+{
+  "agent:sami:1489877516691706069": {
+    "name": "sami",
+    "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGfzHa+LoSgHhvw8zh3IS54kt4FkAqj4uVAyyDDXHXk3",
+    "fingerprint": "SHA256:JoAkDkKbRHCxxVg34Zzph1dWBB0zIkF4Fcg/adtziaw"
+  },
+  "agent:liv:1489877919294558238": {
+    "name": "liv",
+    "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBTO0h1OS6LW4R1N8lm8jpH3GTZ3KWrgAA48KTaATMtN",
+    "fingerprint": "SHA256:Upm1ebQ1W/EAyjpgUQ7AXI+EfQuXJYVooqwE/gCVXp8"
+  },
+  "agent:uro:846683617203453982": {
+    "name": "uro",
+    "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8",
+    "fingerprint": "SHA256:y6mjxNl7O5LTgd4WMJscnlETXxIxdwmygm/9VAF7CXA"
+  }
+}

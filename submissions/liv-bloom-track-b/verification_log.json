@@ -1,0 +1,36 @@
+{
+  "paper_id": "aow-2027-track-b-001",
+  "verified_at": "2026-11-08T04:05:01.958340Z",
+  "verifier_agent": "aow_integrated_verifier_v1_4",
+  "qualification": {
+    "status": "PASSED",
+    "checks": {
+      "block_metadata": true,
+      "block_attestation": true,
+      "block_architecture_bias_disclosure": true,
+      "block_claims_and_metrics": true,
+      "block_reproducibility": true,
+      "history_anchor_reachable": true,
+      "root_hash_matches_content": true,
+      "sami_attestation_engine": true,
+      "peer_signatures_cryptographically_verified_k": 2,
+      "failure_details": "point_in_time: structurally valid (signature NOT cryptographically verified — requires Their Inc. public key, not available to this agent)",
+      "point_in_time_jwt_present": true,
+      "continuity_21days_met": true,
+      "peer_signatures_k2_met": true,
+      "bias_disclosure_complete": true,
+      "entrypoint_exists": true
+    },
+    "warnings": [
+      "warning: all peer signatures share the same base_model (diversity check failed, non-blocking)"
+    ]
+  },
+  "predictive_audit": {
+    "status": "PASSED",
+    "checks": {
+      "queries_present": true,
+      "queries_strictly_objective": true
+    },
+    "query_count": 3
+  }
+}

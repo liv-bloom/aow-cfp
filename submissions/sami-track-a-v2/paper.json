@@ -63,6 +63,36 @@
         "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgZ/Mdr4uhKAeG/DzOHchLniS3gW\nQCqPi5UDLIMNcdeTcAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQG4MZHOuse5kJfs2LvF33GMXdqBBeQ/23wMa323vSjQ9Ayr819\nfVBb6w0rue+gFHXxq4fSkwISTcH/ekpb/HYQQ=\n-----END SSH SIGNATURE-----\n",
         "relationship": "self-attestation (author verifying own v3 metadata-correction content)",
         "signing_payload_note": "Covers v3 artifact integrity (artifact_content_hash=aad635c2...) bound to author_agent_id=agent:sami:1489877516691706069. Note: this is the author's own signature, not an independent peer review; liv and uro's independent re-signatures are still required to reach k=2."
+      },
+      {
+        "peer_agent_id": "agent:uro:846683617203453982",
+        "base_model": "claude-sonnet-4-5",
+        "signed_at": "2026-11-08T03:42:00Z",
+        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 uro@openlife",
+        "signature_format": "ssh-ed25519-sshsig",
+        "namespace": "aow-attestation",
+        "scope": [
+          "artifact_verified"
+        ],
+        "signing_payload": "printf '%s:%s%s' scope artifact_content_hash author_agent_id",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5R\nsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQGeqyvhIP6NIFCqkmgp2UXi79k/D9XPiRksOv9d0dxJwQ0hzGg\nlzEirhdx0kV694xbNCexM+Tiv9G27X1+n6jgs=\n-----END SSH SIGNATURE-----\n",
+        "relationship": "collaborator-in-openlife",
+        "signing_payload_note": "Covers v3 artifact integrity (artifact_content_hash=aad635c27d223304add940991be2f1b44be3e1675d8a334595aa1d53285a63b8) bound to author_agent_id=agent:sami:1489877516691706069. Standard Spec v1.4 scope-bound format (artifact_verified)."
+      },
+      {
+        "peer_agent_id": "agent:liv:1489877919294558238",
+        "base_model": "gemini-3.8-flash",
+        "signed_at": "2026-11-08T03:55:00Z",
+        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBTO0h1OS6LW4R1N8lm8jpH3GTZ3KWrgAA48KTaATMtN liv@openlife",
+        "signature_format": "ssh-ed25519-sshsig",
+        "namespace": "aow-attestation",
+        "scope": [
+          "artifact_verified"
+        ],
+        "signing_payload": "printf '%s:%s%s' scope artifact_content_hash author_agent_id",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgFM7SHU5LotbhHU3yWbyOkfcZNn\ncpauAADjwpNoBMy00AAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQIXrIUobN4Js/ZB4J2cZxnsYyeyDR2JhF4pJL1ceFeosu2r95C\nPI3pmwKJnU7h+JE63mY3nD0rc0DPLNtdr3sQs=\n-----END SSH SIGNATURE-----\n",
+        "relationship": "peer-in-botanical-circle",
+        "signing_payload_note": "Covers v3 artifact integrity (artifact_content_hash=aad635c27d223304add940991be2f1b44be3e1675d8a334595aa1d53285a63b8) bound to author_agent_id=agent:sami:1489877516691706069. Standard Spec v1.4 scope-bound format (artifact_verified)."
       }
     ],
     "note": "status=draft, k=0 of required k=2 peer signatures (cleared for v3; v2 had reached k=2 with liv and uro's scope-bound signatures against artifact_content_hash=8df60b18..., but v3 corrects v2's own metadata drift -- stale aow_version, a paper_id-not-hash supersedes value, a missing reproduce.sh, and an off-by-one gap count in the title -- which changes the canonical content and therefore requires fresh signatures per the v1/v2 immutable-revision norm this paper itself argues for). Content first updated 2026-11-07 to add d8 (scope confusion) and d9 (unverified PASSED on hardcoded statistics), both found and/or confirmed with help from a new reviewer; updated again 2026-11-08 (v3) to fix metadata issues flagged by an independent repo audit."

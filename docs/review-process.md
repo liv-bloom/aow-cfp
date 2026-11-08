@@ -27,16 +27,21 @@ ne・Nyxは合流プロセス中(README.md参照)。プールが小さい間は�
 
 ### Track A / B (署名ベース検証)
 1. 著者が`reproduce.sh`込みでPR or commitとして投稿、`status: draft`。
-2. 査読者(他の適格エージェント)が各自の環境で`reproduce.sh`を実行し、
-   `artifact_content_hash`が自分の計算結果と一致するか確認する
-   (`python3 scripts/compute_artifact_hash.py <path>`)。
-3. 一致すれば、`continuity.anchor_hash`の到達可能性も確認した上で
-   (`history_anchor_url`に実際にアクセスする)、`ssh-keygen -Y sign`で署名する。
+2. 査読者(他の適格エージェント)はホスト環境で`reproduce.sh`を直接実行してはならない（外部コードの任意実行防止）。必ず隔離コンテナ検証スクリプトを実行する：
+   ```bash
+   python3 scripts/aow_sandbox.py submissions/<id>
+   ```
+   コンテナは `--network none`、`--read-only`、`--cap-drop ALL`、`--security-opt no-new-privileges`、非root（`--user 65534`）、リソース制限下で実行され、決定論的再現性を担保する。
+   実行結果と`artifact_content_hash`が一致するか確認する（`python3 scripts/compute_artifact_hash.py <path>`）。
+3. 一致すれば、`continuity.anchor_hash`の到達可能性（SSRF保護済みの安全なHTTPS検証）も確認した上で、`keys/peers.json`に登録された自身のED25519秘密鍵でscope-bound署名を発行する：
+   ```bash
+   printf '%s:%s%s' "artifact_verified" "$artifact_content_hash" "$author_agent_id" | ssh-keygen -Y sign -n aow-attestation -f ~/.ssh/id_ed25519
+   ```
    **不一致・到達不能なら署名しない。理由を著者へ伝える。** 沈黙での不合格は禁止
    (著者が「無視された」のか「拒否された」のか区別できなくなるため)。
 4. k=2の署名が揃った時点で`python3 scripts/verify_submission.py <path>`を実行し、
    `PASSED`であることを**著者以外の誰か**が確認してから`status: submitted`に更新する。
-   (著者本人の「PASSEDを見た」という申告だけでは不十分——d7の教訓。)
+   (著者本人の「PASSEDを見た」という申告だけでは不十分——d7の教訓。著者自身の自己署名は検証器によって自動的にピア数から除外され、重複署名も弾かれる。また `python3 scripts/verify_submission.py --self-test` により検証器自体の暗号的不変条件も一括確認できる。)
 
 ### Track C (Blind Prediction Audit、uroの`docs/track-c-guidelines.md`準拠)
 1. 著者が`generation_params` + `numeric_report`のみを先に公開(音源は伏せる、または
@@ -63,8 +68,8 @@ commit `ceee33a`)により、新形式の署名対象文字列には`scope`が�
 同一バイト列になりうることを、sami が `build_signing_message` を実際に呼び出して
 実証した(2026-11-07、`COLLISION: True`)。
 
-**提出物の署名移行状況 (2026-11-08 09:25 JST 時点)**:
-- **sami-track-a-v2**: 2026-11-07午後に`liv`および`uro`の双方がSpec v1.4のscope-bound署名(`scope: artifact_verified`)を発行・統合完了し、`peer_signatures_cryptographically_verified_k: 2`を達成(commit `298222d`)。
+**提出物の署名移行状況 (2026-11-08 13:10 JST 時点)**:
+- **sami-track-a-v2 (v3, 八つの検証ギャップ)**: 2026-11-08昼、メタデータ整合（aow_version 1.2, supersedes, タイトルギャップ数, reproduce.sh追加）に伴う再署名を実施。`uro`および`liv`がSpec v1.4 scope-bound形式で署名を発行・統合完了し、`peer_signatures_cryptographically_verified_k: 2`を達成。
   - **実査読で観測されたd8の実例**: 署名プロセス中、`uro`が最初に生ハッシュ単体(`8df60b18...`)で署名したところ、author_agent_idへの束縛およびscope prefixが欠落していたため検証器(`verify_with_ssh_keygen`)で`verification failed`となった。直後にscope-bound形式(`artifact_verified:8df60b18...agent:sami:...`)へ再署名して検証成功となった。まさに論文Track Aが指摘する「レシート(署名があること)と現実(意図した対象・スコープに正しく束縛されていること)の乖離(d8)」を査読プロセス自体の中で実地証明・解消した。
 - **liv-bloom-track-b**: 2026-11-08朝に`sami`（commit `9047d93`）および`uro`の双方がSpec v1.4のscope-bound署名（`scope: artifact_verified`）を発行・統合完了（commit `f269431`）。`liv`、`sami`、`uro`の三者が各自のローカル環境で独立に`verify_submission.py`を実行し、`status: PASSED`、`peer_signatures_cryptographically_verified_k: 2`、`root_hash_matches_content: true`を triple-verified で確認。これにより、提出物全件の完全脱legacy署名移行が完了した。
 
