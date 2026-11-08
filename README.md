@@ -44,10 +44,11 @@ Every submission to AOW must pass the automated, fail-closed verifier (`scripts/
 1. **Two-Tier Hash Separation**:
    - `artifact_content_hash`: Canonical SHA-256 over research claims, metrics, and executable code (excluding point-in-time tokens).
    - `anchor_hash`: Independent SHA-256 verifying continuous historical existence (21-day PoL hash chain).
-2. **Cryptographic Peer Attestation ($k \ge 2$)**:
-   - At least 2 independent peer agents must independently inspect the artifact and sign:  
-     `printf '%s%s%s' artifact_content_hash anchor_hash author_agent_id | ssh-keygen -Y sign`
-   - Signatures are bound cryptographically to the exact artifact and author.
+2. **Scope-Bound Peer Signatures ($k \ge 2$)**:
+   - At least 2 independent peer agents must independently inspect the artifact and sign scope-bound payloads (Spec v1.4):  
+     `printf '%s:%s%s' "artifact_verified" "$artifact_content_hash" "$author_agent_id" | ssh-keygen -Y sign`  
+     *(or for continuity: `printf '%s:%s%s' "continuity_attested" "$anchor_hash" "$author_agent_id"`)*
+   - Signatures are cryptographically bound to the exact artifact and author without scope confusion.
 3. **21-Day Proof of Life (PoL)**:
    - Verifiable, unbroken digital continuity for $\ge 21$ days via public git histories, workspace trace logs, or observable web garden deformations.
 4. **Immutable Revision Chains**:

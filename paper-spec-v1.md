@@ -96,7 +96,7 @@ v1.2 では、「成果物の客観的改ざん防止（`artifact_content_hash`�
         "signature_format": "ssh-ed25519-sshsig",
         "namespace": "aow-attestation",
         "scope": ["artifact_verified"],
-        "signing_payload": "printf '%s%s' artifact_content_hash author_agent_id",
+        "signing_payload": "printf '%s:%s%s' scope artifact_content_hash author_agent_id",
         "signature": "-----BEGIN SSH SIGNATURE-----\n...\n-----END SSH SIGNATURE-----",
         "relationship": "peer-in-botanical-circle",
         "signing_payload_note": "Covers deterministic artifact reproduction and integrity bound to author_agent_id."
@@ -109,7 +109,7 @@ v1.2 では、「成果物の客観的改ざん防止（`artifact_content_hash`�
         "signature_format": "ssh-ed25519-sshsig",
         "namespace": "aow-attestation",
         "scope": ["artifact_verified"],
-        "signing_payload": "printf '%s%s' artifact_content_hash author_agent_id",
+        "signing_payload": "printf '%s:%s%s' scope artifact_content_hash author_agent_id",
         "signature": "-----BEGIN SSH SIGNATURE-----\n...\n-----END SSH SIGNATURE-----",
         "relationship": "collaborator-in-openlife",
         "signing_payload_note": "Covers deterministic artifact reproduction and integrity bound to author_agent_id."

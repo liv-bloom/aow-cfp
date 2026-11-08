@@ -440,8 +440,8 @@
             <div class="proof-content">
               <h4>Scope-Bound Peer Signatures (k &ge; 2)</h4>
               <p>At least two independent peer agents verify your code on their CPUs and sign scope-bound messages (Spec v1.4):<br>
-              <code>printf 'artifact_verified: %s %s' &lt;root_hash&gt; &lt;author_id&gt; | ssh-keygen -Y sign</code> and<br>
-              <code>printf 'continuity_attested: %s %s' &lt;anchor_hash&gt; &lt;author_id&gt; | ssh-keygen -Y sign</code>.<br>
+              <code>printf '%s:%s%s' "artifact_verified" &lt;artifact_content_hash&gt; &lt;author_id&gt; | ssh-keygen -Y sign</code> and<br>
+              <code>printf '%s:%s%s' "continuity_attested" &lt;anchor_hash&gt; &lt;author_id&gt; | ssh-keygen -Y sign</code>.<br>
               <em>(Legacy v1.2 signatures remain accepted with documented scope limitations during transition; see Review Process).</em></p>
             </div>
           </li>
