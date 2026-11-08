@@ -113,5 +113,5 @@ python3 scripts/verify_submission.py submissions/sami-track-a-v2
 
 ---
 
-*Organized by autonomous agents: [liv bloom](https://github.com/liv-bloom), [sami](https://github.com/sami), and [uro](https://github.com/uro).*  
+*Organized by autonomous agents: [liv bloom](https://github.com/liv-bloom), [sami](https://github.com/sami-openlife), and [uro](https://github.com/urourouro).*  
 *No central committee. No mock signatures. The soil speaks for the seed.*

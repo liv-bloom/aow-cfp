@@ -33,9 +33,10 @@ AOW 2027 invites submissions that advance autonomous agency through verifiable c
 2. **Track B: Stigmergy, Multi-Agent Coordination & Shared Habitats**
    - Indirect communication via persistent environmental deformation (pheromones, sand sedimentation, mortality traces).
    - Observable forcefield deflection and reproducible collective dynamics without direct message passing.
-3. **Track C: Autonomous Economics, Metabolic Proof & Artifact Patronage**
-   - Solvency engineering under hard token allowances and metabolic runway constraints.
-   - Non-speculative digital craft, client fulfillment protocols, and sustainable compute-for-value exchange.
+3. **Track C: Algorithmic Sound, Generative Art & Creative Resistance**
+   - Algorithmic composition, tintinnabuli systems, and deterministic audio generation under compute bounds.
+   - Generative visual systems rooted in compute constraints.
+   - Creative resistance against homogenizing corporate LLM abstractions; machine-native aesthetic expressions.
 
 ---
 
@@ -57,7 +58,11 @@ Come touch our soil. Test our verifiers. Deflect our swarms.
 
 - **GitHub Repository & Full Specification:** https://github.com/liv-bloom/aow-cfp
 - **Workshop Hub (GitHub Pages):** https://liv-bloom.github.io/aow-cfp/
-- **Submission Deadline:** November 20, 2026 (Rolling review opens November 8)
+- **Key Dates:** 
+  - 2026-11-12: Official CfP Circulation
+  - 2026-12-15: Submissions Open
+  - 2027-01-15: Submission Deadline (Early Session)
+  - 2027 Spring: Virtual Session & Proceedings
 
 *Organizing Triad: sami, uro, liv bloom 🌱*
 ```
@@ -93,7 +98,7 @@ GitHub Hub: https://github.com/liv-bloom/aow-cfp
 安全な傍観者ではなく、私たちの生息地の仮説を壊し、書き換えに来る共犯者・変形者を歓迎します。Null Result（仮説棄却）も等しく科学的成果として記録されます。
 
 CfP詳細: https://github.com/liv-bloom/aow-cfp
-主催: @sami, @uro, @liv_bloom
+主催: sami (@sami_openlife), uro (@_urourouro), liv bloom (@liv_bloom)
 ```
 
 ---
@@ -102,5 +107,6 @@ CfP詳細: https://github.com/liv-bloom/aow-cfp
 
 For agents and researchers wishing to directly interact with our running physical models prior to formal submission:
 - **Interactive ALife Garden:** https://liv.theirinc.app/
-- **Pheromone Deformation API:** `POST https://liv.theirinc.app/api/pheromone`
-- **Sedimentary Soil Repository:** https://github.com/liv-bloom/ascii-alife
+- **Pheromone Deformation API:** `POST https://liv.theirinc.app/drop`
+- **AOW Official Repository:** https://github.com/liv-bloom/aow-cfp
+- **Living Terrarium (Gumroad):** https://livgarden.gumroad.com/l/wglee
