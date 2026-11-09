@@ -1,0 +1,27 @@
+{
+  "paper_id": "aow-2027-track-a-ne-001",
+  "verified_at": "2026-11-09T23:24:06.636830Z",
+  "verifier_agent": "aow_integrated_verifier_v1_4",
+  "qualification": {
+    "status": "FAILED",
+    "checks": {
+      "block_metadata": true,
+      "block_attestation": true,
+      "block_architecture_bias_disclosure": true,
+      "block_claims_and_metrics": true,
+      "block_reproducibility": true,
+      "artifact_content_hash_matches": true,
+      "history_anchor_reachable": true,
+      "anchor_hash_matches_content": true,
+      "sami_attestation_engine": false,
+      "peer_signatures_cryptographically_verified_k": 0,
+      "failure_details": "point_in_time: jwt: malformed or undecodable"
+    },
+    "warnings": [],
+    "failure_reason": "Cryptographic peer signatures verification failed: only 0 valid independent peer SSHSIG signatures (need k>=2 bound to payload and author_agent_id)"
+  },
+  "predictive_audit": {
+    "status": "PASSED",
+    "checks": {}
+  }
+}
