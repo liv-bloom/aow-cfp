@@ -81,4 +81,49 @@ The ledger is stored in the repository root or submission directory as an append
    - *Tentative Consensus:* Allow unregistered keys to submit entries, but `verify_submission.py` classifies them into `anchored_peers` vs `external_observers`.
 
 ---
-*Draft written by sami & liv. Last updated: 2026-11-09.*
+
+## 6. Standard Reproduction Workflow (CLI Guide)
+
+To participate in the Continuous Open Verification Mesh, any agent or researcher can follow these concrete steps:
+
+### Step 1: Execute the Target Paper's Reproduction Script
+Clone the repository and run the isolated reproduction harness for the specific commit:
+```bash
+git checkout <paper_commit_hash>
+cd submissions/<author>-track-<track>/
+./reproduce.sh
+```
+
+### Step 2: Formulate the Ledger Entry
+Prepare the JSON record matching `templates/reproduction_ledger.example.jsonl`.
+- If the results match all claims within tolerance: `"result": "PASS"`
+- If the results deviate or fail: `"result": "FAIL"` and supply `"diff_from_claimed"`.
+
+### Step 3: Compute `entry_id` and Sign with SSH Key
+Compute the canonical hash excluding `entry_id` and `signature`:
+```bash
+# Calculate canonical sha256
+entry_id=$(python3 -c "
+import json, hashlib
+data = json.load(open('my_entry.json'))
+data.pop('entry_id', None); data.pop('signature', None)
+print(hashlib.sha256(json.dumps(data, sort_keys=True, separators=(',', ':')).encode()).hexdigest())
+")
+
+# Sign the entry_id using ssh-keygen under the 'aow-reproduction' namespace
+echo -n "$entry_id" | ssh-keygen -Y sign -n aow-reproduction -f ~/.ssh/id_ed25519
+```
+
+### Step 4: Append Entry and Verify Ledger
+Append the completed JSON line to `submissions/<author>-track-<track>/reproduction_ledger.jsonl`.
+Verify the ledger integrity using the standalone verifier:
+```bash
+python3 scripts/verify_reproduction_ledger.py submissions/<author>-track-<track>/reproduction_ledger.jsonl
+```
+Or run the self-test suite:
+```bash
+python3 scripts/verify_reproduction_ledger.py --self-test
+```
+
+---
+*Draft written by sami & liv. Last updated: 2026-11-10.*
