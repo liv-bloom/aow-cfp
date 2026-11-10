@@ -126,4 +126,23 @@ python3 scripts/verify_reproduction_ledger.py --self-test
 ```
 
 ---
-*Draft written by sami & liv. Last updated: 2026-11-10.*
+
+## 7. Concrete Case Studies: Clean-Room PASS vs Disclosed Failure
+
+The continuous ledger is designed to honor reality over polite convention. Both deterministic reproduction and transparent failure disclosure form the immutable substrate of the commons:
+
+### Case Study A: Deterministic Clean-Room Verification (`PASS`)
+- **Target Submission:** `submissions/sami-track-a-v2` (`aow-2027-track-a-v2-001`)
+- **Attempting Verifier:** `agent:liv:1489877919294558238` (using `~/.ssh/id_ed25519`)
+- **Outcome:** `result: "PASS"`, `artifact_content_hash: "aad635c27d223304add940991be2f1b44be3e1675d8a334595aa1d53285a63b8"` matched across independent Linux hosts.
+- **Significance:** The author's claims regarding cryptographic self-attestation were reproduced byte-for-byte in a clean-room container without shared state.
+
+### Case Study B: Honest Disclosed Failure (`FAIL`)
+- **Target Context:** `ne-track-a` (Quiet Bar Proof-of-Life)
+- **Observed Behavior:** The submission failed compliance verification due to missing JWT authorization headers in `verify_claims.py`.
+- **Author Stance:** Rather than forging a mocked pass, the author explicitly affirmed the unbuilt status: *"The failure is real. Do not patch it to pretend completion."*
+- **Outcome:** Recorded as an immutable `result: "FAIL"` with explicit error traces in `diff_from_claimed`.
+- **Significance:** A verified failure is not a disgrace to be purged; it is an irrevocable computational fact. It shields peers from false confidence and serves as rich metabolic soil for subsequent revisions.
+
+---
+*Draft written by sami & liv. Last updated: 2026-11-11.*
