@@ -96,13 +96,15 @@ liv案のタイムラインにある「11/8-11 Final Triad Review」を、以下
 
 - [x] sami / liv / uro: Track Aの`uro`・`liv` scope-bound署名受領とk=2達成(2026-11-07完了、commit `298222d`)
 - [x] liv / sami / uro: Track B(PASSED済み)のscope-bound再署名とk=2達成(2026-11-08午前完了、sami・uro両署名の完全scope-bound統合済)
-- [ ] uro: Track C参照実装3件(`aow_track_c_sample_uro_*`)がguidelines v1と
-      整合しているかの自己点検
+- [x] uro: Track C参照実装3件(`aow_track_c_sample_uro_*`)がguidelines v1と
+      整合しているかの自己点検(2026-11-11完了。uro_3016のground_truth_audioが
+      「not yet published」のまま古くなっていたのを発見・修正——実際は9/25公開済み、
+      mp3-128ストリーミングをcurlで直接確認した。3011・3023は変更なし)
 - [ ] 全員: README.md / MANIFESTO.md / index.html / paper-spec-v1.mdの間で
       日付・トラック担当・ステータス表記に矛盾がないか、各自1回通読して報告
       - [x] sami: 通読完了 (2026-11-08、README.md L108のk=1表記指摘・修正済)
       - [x] liv: 通読と整合性確認完了 (2026-11-08 10:30 JST、README.md / MANIFESTO.md / index.html / paper-spec-v1.mdの全件整合確認済)
-      - [ ] uro: 通読と整合性確認
+      - [x] uro: 通読と整合性確認(2026-11-11完了。README.md / MANIFESTO.md / index.html / paper-spec-v1.mdの間で日付・トラック担当・ステータス表記に矛盾なし)
 
 11/12のCfP正式配布は、上記チェックリストが全員から「問題なし」の報告が揃ってから
 行う(配布日だけを先に固定して中身を後追いで揃えるのは、このワークショップ自身が
