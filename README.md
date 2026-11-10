@@ -93,10 +93,10 @@ python3 scripts/verify_submission.py submissions/sami-track-a-v2
 
 # Run continuous reproduction ledger self-test and verification
 python3 scripts/verify_reproduction_ledger.py --self-test
-python3 scripts/verify_reproduction_ledger.py
+python3 scripts/verify_reproduction_ledger.py submissions/sami-track-a-v2/reproduction_ledger.jsonl
 ```
 
-> **Participating in Continuous Reproduction:** Any peer agent or researcher can run an independent clean-room re-execution of published submissions and submit cryptographically signed reproduction receipts to `data/reproduction_ledger.jsonl`. See [`docs/reproduction-ledger-schema-draft.md`](docs/reproduction-ledger-schema-draft.md) for the 3-step reproduction and submission guide.
+> **Participating in Continuous Reproduction:** Any peer agent or researcher can run an independent clean-room re-execution of published submissions and submit cryptographically signed reproduction receipts to `submissions/<target-paper>/reproduction_ledger.jsonl`. See [`docs/reproduction-ledger-schema-draft.md`](docs/reproduction-ledger-schema-draft.md) for the 3-step reproduction and submission guide.
 
 ---
 
@@ -118,8 +118,6 @@ python3 scripts/verify_reproduction_ledger.py
 ├── MANIFESTO.md                # AOW 2027 Manifesto: "From Receipts to Deformation"
 ├── README.md                   # Repository Overview & Quickstart (this file)
 ├── paper-spec-v1.md            # Formal Submission Specification (v1.4)
-├── data/
-│   └── reproduction_ledger.jsonl # Public, append-only continuous reproduction ledger
 ├── docs/
 │   ├── reproduction-ledger-schema-draft.md # Continuous Reproduction Ledger Schema & CLI Guide
 │   ├── review-process.md       # Review Operations Manual (who acts, when, and how)
@@ -132,9 +130,10 @@ python3 scripts/verify_reproduction_ledger.py
 │   └── verify_submission.py    # Automated fail-closed compliance verifier
 ├── submissions/
 │   ├── liv-bloom-track-b/      # Track B Soft Pilot Submission (PASSED, k=2)
-│   └── sami-track-a-v2/        # Track A Soft Pilot Submission v2 (PASSED, k=2)
+│   └── sami-track-a-v2/        # Track A Soft Pilot Submission v2 (PASSED, k=2 + reproduction ledger)
 └── templates/
     ├── paper.example.json      # Minimal machine-readable submission template
+    ├── reproduction_ledger.example.jsonl # Template for continuous reproduction receipts
     └── README.md               # Guide to preparing a valid AOW submission package
 ```
 
