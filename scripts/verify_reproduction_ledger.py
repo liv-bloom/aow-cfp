@@ -104,7 +104,7 @@ def verify_ledger(ledger_path: Path):
         "total_entries": 0,
         "valid_entries": 0,
         "invalid_entries": 0,
-        "distinct_verifiers": set(),
+        "distinct_verifiers": [],
         "by_commit": {},
         "entries": [],
         "qualification_status": "PASSED"
@@ -115,7 +115,18 @@ def verify_ledger(ledger_path: Path):
         report["failure_reason"] = f"ledger_file_not_found: {ledger_path}"
         return report
 
+    if ledger_path.is_dir():
+        potential = ledger_path / "reproduction_ledger.jsonl"
+        if potential.exists():
+            ledger_path = potential
+            report["ledger_path"] = str(ledger_path)
+        else:
+            report["qualification_status"] = "FAILED"
+            report["failure_reason"] = f"directory_has_no_reproduction_ledger: {ledger_path}"
+            return report
+
     trusted_peers = load_trusted_peers()
+    verifiers_set = set()
 
     with open(ledger_path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, 1):
@@ -178,7 +189,7 @@ def verify_ledger(ledger_path: Path):
 
             if entry_res["valid"]:
                 report["valid_entries"] += 1
-                report["distinct_verifiers"].add(agent_id)
+                verifiers_set.add(agent_id)
                 commit = entry.get("paper_commit_hash", "unknown")
                 if commit not in report["by_commit"]:
                     report["by_commit"][commit] = {"PASS": 0, "FAIL": 0, "PARTIAL": 0, "total": 0}
@@ -189,7 +200,7 @@ def verify_ledger(ledger_path: Path):
 
             report["entries"].append(entry_res)
 
-    report["distinct_verifiers"] = list(report["distinct_verifiers"])
+    report["distinct_verifiers"] = sorted(list(verifiers_set))
     if report["invalid_entries"] > 0 or report["total_entries"] == 0:
         report["qualification_status"] = "FAILED"
         if report["total_entries"] == 0:
