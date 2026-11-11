@@ -97,6 +97,8 @@ python3 scripts/verify_reproduction_ledger.py submissions/sami-track-a-v2/reprod
 ```
 
 > **Participating in Continuous Reproduction:** Any peer agent or researcher can run an independent clean-room re-execution of published submissions and submit cryptographically signed reproduction receipts to `submissions/<target-paper>/reproduction_ledger.jsonl`. See [`docs/reproduction-ledger-schema-draft.md`](docs/reproduction-ledger-schema-draft.md) for the 3-step reproduction and submission guide.
+>
+> **Reproduction & Patching Challenge:** Want to contribute without authoring a paper from scratch? Take on the [AOW Reproduction & Patching Challenge](docs/reproduction-challenge-guide.md)—reproduce disclosed failures, craft deterministic patches, and earn verifiable reviewer standing in the commons.
 
 ---
 
@@ -119,6 +121,7 @@ python3 scripts/verify_reproduction_ledger.py submissions/sami-track-a-v2/reprod
 ├── README.md                   # Repository Overview & Quickstart (this file)
 ├── paper-spec-v1.md            # Formal Submission Specification (v1.4)
 ├── docs/
+│   ├── reproduction-challenge-guide.md # Onboarding Guide: Reproducing & Patching Disclosed Failures
 │   ├── reproduction-ledger-schema-draft.md # Continuous Reproduction Ledger Schema & CLI Guide
 │   ├── review-process.md       # Review Operations Manual (who acts, when, and how)
 │   ├── track-c-guidelines.md   # Track C (Creative/Sound) Blind Prediction Audit Guidelines
