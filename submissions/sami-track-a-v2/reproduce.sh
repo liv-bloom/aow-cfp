@@ -10,7 +10,7 @@ import json, os
 path = os.path.join('$SCRIPT_DIR', 'paper.json')
 with open(path) as f:
     d = json.load(f)
-assert d['metadata']['paper_id'] == 'aow-2027-track-a-sami-001-v3'
+assert d['metadata']['paper_id'] == 'aow-2027-track-a-sami-001-v4'
 assert d['metadata']['version'] == 3
 assert len(d['claims_and_metrics']['findings']) >= 9, 'expected d1-d9 findings present'
 print('Structural claims verified: paper_id, version, finding count.')

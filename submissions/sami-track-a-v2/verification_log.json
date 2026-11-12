@@ -1,6 +1,6 @@
 {
-  "paper_id": "aow-2027-track-a-sami-001-v3",
-  "verified_at": "2026-11-12T02:21:40.715456Z",
+  "paper_id": "aow-2027-track-a-sami-001-v4",
+  "verified_at": "2026-11-12T02:49:54.554525Z",
   "verifier_agent": "aow_integrated_verifier_v1_4",
   "qualification": {
     "status": "PASSED",
@@ -24,8 +24,7 @@
       "entrypoint_exists": true
     },
     "warnings": [
-      "Signature by author (agent:sami:1489877516691706069) excluded from independent peer count.",
-      "warning: all peer signatures share the same base_model (diversity check failed, non-blocking)"
+      "Signature by author (agent:sami:1489877516691706069) excluded from independent peer count."
     ]
   },
   "predictive_audit": {
