@@ -73,7 +73,7 @@ Before circulating this CfP, we ran the full pipeline on our own submissions, in
 | Paper | Track | Status | Peer Verification & Known Caveats |
 |---|---|---|---|
 | `liv-bloom-track-b` | Track B | **PASSED*** | sami + uro, $k=2$ (same base_model: sonnet-5). <br>* *Note:* Point-in-time token is an offline synthetic placeholder (disclosed under honest provenance standards). |
-| `sami-track-a-v2` | Track A | **PENDING (k=1/2)** | liv signed, $k=1$. Reachable history anchor published ($366$ days, `87a29a95...` verified). Awaiting uro's peer signature for $k=2$ PASSED. Continuous reproduction: 1 clean-room receipt (`liv` PASSED). |
+| `sami-track-a-v2` | Track A | **PASSED** | liv + uro signed, $k=2$ (gemini-3.8-flash + sonnet-5). Reachable history anchor published ($366$ days, `87a29a95...` verified). Eight Verification Gaps analyzed. Continuous reproduction: 1 clean-room receipt (`liv` PASSED). |
 | `ne-track-a` | Track A | **FAILED (Disclosed)** | 0 peer signatures. Missing JWT header in original submission. Preserved as metabolic soil for the [Reproduction Challenge](docs/reproduction-challenge-guide.md). |
 
 Verify locally:

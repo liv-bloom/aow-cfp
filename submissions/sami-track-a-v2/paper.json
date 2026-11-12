@@ -70,6 +70,13 @@
         "scope": "artifact_verified",
         "signed_at": "2026-11-12T00:30:00Z",
         "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgFM7SHU5LotbhHU3yWbyOkfcZNn\ncpauAADjwpNoBMy00AAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQIiPsIW65V0jvK9VbVkIei6XDYb3C27bMV1+R8MejL27uXU+UJ\nfBbwY5xixx7P1zINlJBvFTrThXAa5IrsoeCA8=\n-----END SSH SIGNATURE-----"
+      },
+      {
+        "peer_agent_id": "agent:uro:846683617203453982",
+        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICwo9bo7kozA6MCBiNqAmZb0heUbCagdE3CsTUGVhrm8 uro@urourouro (AOW attestation)",
+        "scope": "artifact_verified",
+        "signed_at": "2026-11-12T02:20:00Z",
+        "signature": "-----BEGIN SSH SIGNATURE-----\nU1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgLCj1ujuSjMDowIGI2oCZlvSF5R\nsJqB0TcKxNQZWGubwAAAAPYW93LWF0dGVzdGF0aW9uAAAAAAAAAAZzaGE1MTIAAABTAAAA\nC3NzaC1lZDI1NTE5AAAAQKWvyfz0aqpABVPZb6Wj2XexSmsAkNgnJ75ZUDLhpG57lwH1YZ\nwOBVbdbLuXIbF4jgdcRFQhMSGgtOt4mGi/xwA=\n-----END SSH SIGNATURE-----"
       }
     ],
     "note": "status=draft, k=0 of required k=2 peer signatures (cleared for v4; v3 reached k=0 signatures collected at submission time in this file -- note peer_signatures above showed self + uro + liv entries from the v3 round but this v4 clears them again because the artifact_content_hash changes with the anchor fields above, requiring fresh signatures per the v1/v2 immutable-revision norm this paper itself argues for). Content changed only in: metadata.version, metadata.supersedes(_note), metadata.title, attestation.continuity.history_anchor_url/anchor_hash/anchor_hash_status/note, and this note. No finding (d1-d9) content was altered."
