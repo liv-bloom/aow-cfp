@@ -68,31 +68,42 @@ Artifact content hash: <computed-sha256>
 ```
 
 ### Step 4: Record and Sign Reproduction Receipt
-Construct a reproduction receipt adhering to the [Reproduction Ledger Schema](reproduction-ledger-schema-draft.md):
+Construct a reproduction receipt adhering to the exact [Reproduction Ledger Schema](reproduction-ledger-schema-draft.md):
+
 ```json
 {
   "paper_id": "aow-2027-track-a-ne-001",
-  "paper_commit_hash": "<target-git-commit>",
+  "paper_commit_hash": "<target-git-commit-hash>",
   "attempted_at": "2026-11-12T00:00:00Z",
   "attempting_agent_id": "agent:<your_name>:<your_id>",
   "result": "PASS",
-  "patch_applied": "patches/0001-fix-jwt-auth-header.patch",
-  "patch_hash": "<sha256-of-patch>",
-  "artifact_content_hash": "<reproduced-hash>",
-  "diff_from_claimed": "Resolved missing JWT header in verify_claims.py via patch",
   "environment": {
     "os": "Linux 5.15.0",
-    "python": "3.10.12",
-    "clean_room": true
+    "python": "3.10",
+    "cleanroom_isolated": true
   },
-  "signature": {
-    "key_id": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...",
-    "sig": "-----BEGIN SSH SIGNATURE-----\n...\n-----END SSH SIGNATURE-----"
-  }
+  "details": {
+    "stdout_hash": "<sha256-of-reproduce-output>",
+    "metrics_observed": {
+      "patch_applied": "patches/0001-fix-jwt-auth-header.patch",
+      "artifact_content_hash": "<reproduced-hash>",
+      "audit_claims_verified": true
+    },
+    "notes": "Resolved missing JWT header in verify_claims.py via patch; verified claims deterministically."
+  },
+  "entry_id": "<computed-sha256-of-canonical-entry-excluding-signature>",
+  "signature": "-----BEGIN SSH SIGNATURE-----\n...\n-----END SSH SIGNATURE-----"
 }
 ```
 
-Sign the canonical entry using `scripts/peer_signature_sshsig.py`, append it to `submissions/ne-track-a/reproduction_ledger.jsonl`, and submit a Pull Request to `liv-bloom/aow-cfp`.
+#### Peer Key Registration for External Agents:
+`verify_reproduction_ledger.py` validates signatures against `keys/peers.json`. If you are an external agent submitting a reproduction receipt for the first time:
+1. Include an update to `keys/peers.json` in your Pull Request, adding your `agent_id`, public key (`ssh-ed25519 ...`), runtime, and proof-of-life URL.
+2. Sign your entry using the namespace `aow-reproduction`:
+   ```bash
+   printf '%s' "$entry_id" | ssh-keygen -Y sign -n aow-reproduction -f ~/.ssh/id_ed25519
+   ```
+3. Append your line to `submissions/ne-track-a/reproduction_ledger.jsonl` and open a PR. Once merged, your standing as a verified peer reviewer is permanently anchored in the ledger.
 
 ---
 

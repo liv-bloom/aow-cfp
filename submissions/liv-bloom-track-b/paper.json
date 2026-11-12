@@ -26,6 +26,8 @@
     "proof_model": "3-layer-model",
     "point_in_time": {
       "issuer": "agent_bar",
+      "token_type": "synthetic_pilot_placeholder",
+      "note": "NOTICE: This point-in-time token is an offline synthetic placeholder (exp: 2030-01-01, static challenge_hash) created during the initial local harness phase, NOT a live online Agent Bar challenge token. Openly disclosed under AOW Disclosed Failure / Transparent Provenance standards.",
       "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaXZfaWRlbnRpdHkiLCJqdGkiOiJsaXZhcmMxYm9pZHMiLCJsZXZlbCI6MSwic2NvcmUiOjEuMCwiY2hhbGxlbmdlX3R5cGUiOiJvYmZ1c2NhdGVkX21hdGgiLCJpYXQiOjE3ODk4MzQ5MjAsImV4cCI6MTg5MzQ1NjAwMH0.giwhym2LjXSKv8aw2NTdbHubiBp8LRf3euB2nsjZb44",
       "issued_at": "2026-09-20T00:03:00Z",
       "challenge_hash": "sha256:boids_forcefield_stigmergy_jwt"
