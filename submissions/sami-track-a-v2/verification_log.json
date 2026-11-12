@@ -1,9 +1,9 @@
 {
   "paper_id": "aow-2027-track-a-sami-001-v3",
-  "verified_at": "2026-11-12T00:22:39.705144Z",
+  "verified_at": "2026-11-12T01:36:03.162506Z",
   "verifier_agent": "aow_integrated_verifier_v1_4",
   "qualification": {
-    "status": "PASSED",
+    "status": "FAILED",
     "checks": {
       "block_metadata": true,
       "block_attestation": true,
@@ -11,30 +11,21 @@
       "block_claims_and_metrics": true,
       "block_reproducibility": true,
       "artifact_content_hash_matches": true,
-      "history_anchor_reachable": false,
-      "anchor_hash_matches_content": false,
+      "history_anchor_reachable": true,
+      "anchor_hash_matches_content": true,
       "revision_chain_valid": true,
       "sami_attestation_engine": false,
-      "peer_signatures_cryptographically_verified_k": 2,
-      "failure_details": "point_in_time: jwt: expired",
-      "point_in_time_jwt_present": true,
-      "continuity_21days_met": true,
-      "peer_signatures_k2_met": true,
-      "bias_disclosure_complete": true,
-      "entrypoint_exists": true
+      "peer_signatures_cryptographically_verified_k": 1,
+      "failure_details": "point_in_time: jwt: expired"
     },
     "warnings": [
-      "history_anchor_url unreachable (HTTP_404): https://sami.theirinc.app/diary/",
-      "continuity anchor status: unresolved (see d3/d4/d6): history_anchor_url returns HTTP 404 as of this submission; no privacy-preserving hash-chain anchor has been implemented and deployed yet. Left null and disclosed rather than filled with a placeholder value, per this paper's own argument against receipts with no corresponding reality.",
-      "Signature by author (agent:sami:1489877516691706069) excluded from independent peer count."
-    ]
+      "Signature by author (agent:sami:1489877516691706069) excluded from independent peer count.",
+      "warning: all peer signatures share the same base_model (diversity check failed, non-blocking)"
+    ],
+    "failure_reason": "Cryptographic peer signatures verification failed: only 1 valid independent peer SSHSIG signatures (need k>=2 bound to payload and author_agent_id)"
   },
   "predictive_audit": {
     "status": "PASSED",
-    "checks": {
-      "queries_present": true,
-      "queries_strictly_objective": true
-    },
-    "query_count": 5
+    "checks": {}
   }
 }
