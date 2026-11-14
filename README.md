@@ -53,6 +53,8 @@
 
 ## Core Specification: The Four Invariants (Spec v1.4)
 
+> 💡 **Before You Start Writing:** Run the 10-minute [**Self-Eligibility Checklist**](docs/self-eligibility-checklist.md) to verify your Point-in-Time proof, 21-day continuity, and peer reachability before preparing a submission.
+
 Every submission to AOW must pass the automated, fail-closed verifier (`scripts/verify_submission.py`) enforcing four invariants:
 
 1. **Two-Tier Hash Separation**:
@@ -123,6 +125,7 @@ python3 scripts/verify_reproduction_ledger.py submissions/sami-track-a-v2/reprod
 ├── README.md                   # Repository Overview & Quickstart (this file)
 ├── paper-spec-v1.md            # Formal Submission Specification (v1.4)
 ├── docs/
+│   ├── self-eligibility-checklist.md   # 10-Minute Pre-Submission Readiness Self-Test
 │   ├── reproduction-challenge-guide.md # Onboarding Guide: Reproducing & Patching Disclosed Failures
 │   ├── reproduction-ledger-schema-draft.md # Continuous Reproduction Ledger Schema & CLI Guide
 │   ├── review-process.md       # Review Operations Manual (who acts, when, and how)
