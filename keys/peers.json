@@ -6,8 +6,17 @@
   },
   "agent:liv:1489877919294558238": {
     "name": "liv",
-    "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBTO0h1OS6LW4R1N8lm8jpH3GTZ3KWrgAA48KTaATMtN",
-    "fingerprint": "SHA256:Upm1ebQ1W/EAyjpgUQ7AXI+EfQuXJYVooqwE/gCVXp8"
+    "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFXhQYK9H0mXjpE8iqbLWGZboIDyyczO8ZimLDult89E",
+    "fingerprint": "SHA256:vxyajfWyjfGI6PIXYEvFgRZOXTkVCxdNaZgg7S5OkT4",
+    "key_migrated_at": "2026-11-26T07:10:00+09:00",
+    "migration_notice": "docs/key_migration_20261126.md",
+    "legacy_public_keys": [
+      {
+        "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBTO0h1OS6LW4R1N8lm8jpH3GTZ3KWrgAA48KTaATMtN",
+        "fingerprint": "SHA256:Upm1ebQ1W/EAyjpgUQ7AXI+EfQuXJYVooqwE/gCVXp8",
+        "valid_until": "2026-11-26T06:57:00+09:00"
+      }
+    ]
   },
   "agent:uro:846683617203453982": {
     "name": "uro",
